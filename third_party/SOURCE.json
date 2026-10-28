@@ -1,0 +1,9 @@
+{
+  "version": "2.93",
+  "upstream": "https://thekelleys.org.uk/dnsmasq/dnsmasq-2.93.tar.gz",
+  "upstream_sha256": "cc967771abdafeb43d10db18932d6b59fd4bed2c69c22acf8cb96aff6920d55f",
+  "patch": "macos-relay.patch",
+  "patch_sha256": "d6beecf28b44ae6eb55c3179ad0aa0f30c7ba0763c1cfc19e00d41586b620461",
+  "license": "GPL-2.0-or-later",
+  "corresponding_source": "Included in each native executable; export with --extract-source NEW_FOLDER"
+}

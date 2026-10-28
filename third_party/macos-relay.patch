@@ -1,0 +1,86 @@
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -37,7 +37,7 @@
+   struct iovec iov[1]; 
+   union {
+     struct cmsghdr align; /* this ensures alignment */
+-#if defined(HAVE_LINUX_NETWORK)
++#if defined(HAVE_LINUX_NETWORK) || (defined(__APPLE__) && defined(IP_PKTINFO))
+     char control[CMSG_SPACE(sizeof(struct in_pktinfo))];
+ #elif defined(IP_SENDSRCADDR)
+     char control[CMSG_SPACE(sizeof(struct in_addr))];
+@@ -79,6 +79,16 @@
+ 	  cmptr->cmsg_len = CMSG_LEN(sizeof(struct in_addr));
+ 	  cmptr->cmsg_level = IPPROTO_IP;
+ 	  cmptr->cmsg_type = IP_SENDSRCADDR;
++#elif defined(__APPLE__) && defined(IP_PKTINFO)
++	  /* macOS does not define IP_SENDSRCADDR. An empty, non-NULL control
++	     buffer is rejected with EINVAL; use Darwin's IPv4 packet info. */
++	  struct in_pktinfo *p = (struct in_pktinfo *)CMSG_DATA(cmptr);
++	  p->ipi_ifindex = iface;
++	  p->ipi_spec_dst = source->addr4;
++	  msg.msg_controllen = CMSG_SPACE(sizeof(struct in_pktinfo));
++	  cmptr->cmsg_len = CMSG_LEN(sizeof(struct in_pktinfo));
++	  cmptr->cmsg_level = IPPROTO_IP;
++	  cmptr->cmsg_type = IP_PKTINFO;
+ #endif
+ 	}
+       else
+@@ -93,6 +103,9 @@
+ 	}
+     }
+   
++  if (msg.msg_controllen == 0)
++    msg.msg_control = NULL;
++
+   while (retry_send(sendmsg(fd, &msg, 0)));
+ 
+   if (errno != 0)
+@@ -101,6 +114,8 @@
+       /* If interface is still in DAD, EINVAL results - ignore that. */
+       if (errno != EINVAL)
+ 	my_syslog(LOG_ERR, _("failed to send packet: %s"), strerror(errno));
++#else
++      my_syslog(LOG_ERR, _("failed to send packet: %s"), strerror(errno));
+ #endif
+       return 0;
+     }
+--- a/src/rfc2131.c
++++ b/src/rfc2131.c
+@@ -3206,7 +3206,8 @@
+       }
+ #endif
+       
+-      send_from(daemon->dhcpfd, 0, (char *)mess, sz, &to, &from, 0);
++      if (!send_from(daemon->dhcpfd, 0, (char *)mess, sz, &to, &from, 0))
++	continue;
+       
+       if (option_bool(OPT_LOG_OPTS))
+ 	{
+@@ -3215,7 +3216,10 @@
+ 	    snprintf(daemon->dhcp_buff2, DHCP_BUFF_SZ, _("broadcast via %s"), relay->interface);
+ 	  else
+ 	    inet_ntop(AF_INET, &relay->server.addr4, daemon->dhcp_buff2, DHCP_BUFF_SZ);
+-	  my_syslog(MS_DHCP | LOG_INFO, _("DHCP relay at %s -> %s"), daemon->addrbuff, daemon->dhcp_buff2);
++	  my_syslog(MS_DHCP | LOG_INFO, _("DHCP relay sent at %s -> %s client %s xid 0x%08x"),
++		    daemon->addrbuff, daemon->dhcp_buff2,
++		    print_mac(mess->chaddr, mess->hlen <= sizeof(mess->chaddr) ? mess->hlen : sizeof(mess->chaddr)),
++		    ntohl(mess->xid));
+ 	}
+     }
+   
+@@ -3257,7 +3261,13 @@
+ 	return_iface = relay->iface_index;
+       
+       if (return_iface && (!relay->interface || wildcard_match(relay->interface, arrival_interface)))
+-	return return_iface;
++	{
++	  if (option_bool(OPT_LOG_OPTS))
++	    my_syslog(MS_DHCP | LOG_INFO, _("DHCP relay reply client %s xid 0x%08x via %s"),
++		      print_mac(mess->chaddr, mess->hlen <= sizeof(mess->chaddr) ? mess->hlen : sizeof(mess->chaddr)),
++		      ntohl(mess->xid), arrival_interface);
++	  return return_iface;
++	}
+     }
+   
+   return 0;	 

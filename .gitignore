@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+build/
+dist/
+release/
+*.log
+*.leases
+profile.json
+local-config*.json

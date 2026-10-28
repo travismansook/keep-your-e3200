@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Keep Your E3200</title>
+  <desc id="desc">New CHR30A router. Same E3200 extender. A community helper for compatibility and wired connections.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111827"/><stop offset="1" stop-color="#183c43"/></linearGradient>
+    <linearGradient id="line"><stop stop-color="#fbbf24"/><stop offset="1" stop-color="#5eead4"/></linearGradient>
+    <linearGradient id="unit"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+  </defs>
+  <rect width="1200" height="360" rx="22" fill="url(#bg)"/>
+  <circle cx="1120" cy="20" r="210" fill="#5eead4" opacity=".035"/>
+  <circle cx="1080" cy="340" r="190" fill="#5eead4" opacity=".035"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">
+    <rect x="48" y="37" width="226" height="28" rx="14" fill="#25454a"/>
+    <text x="64" y="56" font-size="12" font-weight="700" letter-spacing="1.6" fill="#99f6e4">A SECOND LIFE FOR YOUR EXTENDER</text>
+    <text x="46" y="132" font-size="62" font-weight="750" letter-spacing="-2" fill="#f8fafc">Keep Your E3200.</text>
+    <text x="50" y="177" font-size="25" fill="#b9d4d6">New CHR30A router. Same E3200 extender.</text>
+    <path d="M50 205h590" stroke="#416064"/>
+    <circle cx="60" cy="239" r="6" fill="#5eead4"/>
+    <text x="80" y="246" font-size="20" fill="#e2f2f1">Compatibility help + wired devices back online</text>
+    <rect x="50" y="277" width="139" height="31" rx="15.5" fill="#29474c"/>
+    <text x="68" y="298" font-size="13" font-weight="600" fill="#d1fae5">One Mac launcher</text>
+    <text x="207" y="298" font-size="13" fill="#a1bec2">Community preview · Both Wi-Fi + Ethernet required</text>
+    <g transform="translate(834 47)">
+      <ellipse cx="135" cy="263" rx="102" ry="12" fill="#061116" opacity=".6"/>
+      <path d="M55 35q80-25 160 0v202q-80 28-160 0z" fill="url(#unit)"/>
+      <ellipse cx="135" cy="35" rx="80" ry="17" fill="#e2e8f0"/>
+      <path d="M85 32h100m-96 7h93m-82-14h73" stroke="#7a8c9b" stroke-width="2" opacity=".7"/>
+      <text x="105" y="114" font-size="18" font-weight="700" fill="#344b57">E3200</text>
+      <circle cx="135" cy="190" r="12" fill="#ffffff" stroke="#9ad9cc" stroke-width="4"/>
+      <circle cx="135" cy="190" r="22" fill="none" stroke="#5eead4" opacity=".2" stroke-width="5"/>
+      <path d="M-26 185h42" stroke="url(#line)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="-48" cy="185" r="8" fill="#fbbf24"/>
+      <text x="36" y="296" font-size="14" fill="#b7d9d7">Keep what you already have.</text>
+    </g>
+  </g>
+</svg>

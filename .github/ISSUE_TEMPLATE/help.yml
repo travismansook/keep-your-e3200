@@ -1,0 +1,31 @@
+name: Get help
+description: Report a problem with the combined helper
+body:
+  - type: markdown
+    attributes:
+      value: Please read the setup guide and FAQ first. Remove private addresses, device IDs, passwords and serial numbers from anything you share.
+  - type: input
+    id: equipment
+    attributes:
+      label: Router and extender models
+      placeholder: CHR30A + E3200
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Helper version, Mac chip and macOS version
+    validations:
+      required: true
+  - type: textarea
+    id: symptom
+    attributes:
+      label: What happened?
+      description: Did the helper reach READY? Are both Mac connections active? Which device could not get IPv4?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized error or short log excerpt
+      description: Do not attach an entire private network log.
