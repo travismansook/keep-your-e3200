@@ -11,6 +11,14 @@
 
 **Switched to a Verizon CHR30A? Keep your E3200—and get its wired devices online again.**
 
+## Why keep it?
+
+**Your old E3200 can become an extra Wi-Fi coverage point after your router upgrade.** Put it to work in another room, keep its Ethernet ports useful, and get more use out of hardware you already have.
+
+That is a big part of why I wanted to keep mine. If Verizon replaces your old extender with **another CHR30A acting as an access point at no extra charge** and lets you keep the E3200, you can use the replacement **and** put the retained E3200 back to work as an additional extender. Confirm replacement costs and whether you can keep the old equipment with Verizon for your account.
+
+## Why I needed a helper
+
 I started this project after upgrading my main router from a **CR1000A to a CHR30A**. I wanted to keep using my **E3200 extender connected over coax**, but the equipment no longer worked together as expected.
 
 My E3200 cycled through a yellow-light problem. **When it turned yellow, it lost its internet connection, causing devices connected through it to disconnect.** My earlier logs showed the recovery cycle repeating roughly every **three minutes**, with most interruptions lasting **9–11 seconds**. I couldn’t access the E3200’s network settings page at its IP address. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
