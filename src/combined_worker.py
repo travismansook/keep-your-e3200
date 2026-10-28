@@ -16,6 +16,7 @@ import time
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', choices=('full', 'compatibility'), default='full')
     parser.add_argument('--dnsmasq', required=True)
     parser.add_argument('--config', required=True)
     parser.add_argument('--bridge', required=True)
@@ -34,7 +35,7 @@ def main():
     selector = selectors.DefaultSelector()
     children = []
     buffers = {}
-    bridge_ready = False
+    bridge_ready = args.mode == 'compatibility'
     extender_ready = False
     announced = False
     status = 0
@@ -102,15 +103,17 @@ def main():
             emit(key.data, b'', final=True)
         for _, process in children:
             process.stdout.close()
-        print('Both components stopped.', flush=True)
+        print('Both components stopped.' if args.mode == 'full' else 'E3200 compatibility stopped.', flush=True)
 
     try:
-        if not stopping[0]:
+        if not stopping[0] and args.mode == 'full':
             launch('Ethernet', [sys.executable, args.bridge, '--ethernet', args.ethernet,
                                '--wifi', args.wifi, '--server', args.server,
                                '--extender-mac', args.extender_mac,
                                '--uid', str(args.uid), '--gid', str(args.gid),
                                '--lock-file', args.lock_file])
+        if not stopping[0] and args.mode == 'compatibility':
+            launch('E3200', [args.dnsmasq, '--keep-in-foreground', '--conf-file=' + args.config, '--pid-file='])
         while not stopping[0]:
             drain(.1)
             for label, process in children:
@@ -125,12 +128,12 @@ def main():
                 break
             # The bridge's self-test and exclusive lock must pass before any
             # extender service starts. Existing forwarding code is unchanged.
-            if bridge_ready and len(children) == 1:
+            if args.mode == 'full' and bridge_ready and len(children) == 1:
                 launch('E3200', [args.dnsmasq, '--keep-in-foreground',
                                   '--conf-file=' + args.config, '--pid-file='])
             if bridge_ready and extender_ready and not announced:
                 announced = True
-                print('READY: E3200 and Ethernet helpers are running. Ctrl+C stops both.', flush=True)
+                print('READY: E3200 and Ethernet helpers are running. Ctrl+C stops both.' if args.mode == 'full' else 'READY: Wi-Fi-only E3200 compatibility is running. Ethernet IPv4 fix is OFF. Ctrl+C stops it.', flush=True)
             if not announced and time.monotonic() - started > 20:
                 print('Startup did not complete; stopping both components.', flush=True)
                 status = 1

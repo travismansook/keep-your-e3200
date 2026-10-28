@@ -95,7 +95,8 @@ def main():
     os.chdir(ROOT)
     os.environ.setdefault('PYINSTALLER_CONFIG_DIR', str(ROOT / 'build/pyinstaller-cache'))
     package = prepare()
-    run([sys.executable, ROOT / 'src/desktop.py', '--self-test'])
+    for mode in ('full', 'compatibility'):
+        run([sys.executable, ROOT / 'src/desktop.py', '--self-test', '--mode', mode])
     if args.prepare_only:
         return
     import importlib.metadata
@@ -115,7 +116,8 @@ def main():
          '--specpath', 'build/spec', '--add-data', str(package / 'runtime') + ':runtime',
          '--add-data', str(notices) + ':licenses', ROOT / 'src/desktop.py'])
     binary = ROOT / 'build/native/KeepYourE3200'
-    run([binary, '--self-test'])
+    for mode in ('full', 'compatibility'):
+        run([binary, '--self-test', '--mode', mode])
     run([binary, '--version'])
     release = ROOT / 'release'
     release.mkdir(exist_ok=True)

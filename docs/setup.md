@@ -23,13 +23,12 @@ The E3200 cannot connect wirelessly back to the CHR30A. It can still provide Wi-
 
 I have not tested an E3200 with a G3100, including a wireless connection back to that router instead of coax. These instructions describe my tested CHR30A setup.
 
-On the helper Mac:
+On the helper Mac, connect to your normal **home Wi-Fi with working IPv4**. Then choose:
 
-1. Connect **Wi-Fi** to your normal home network.
-2. Plug an **Ethernet cable** from the Mac's Ethernet port or adapter directly into an Ethernet port on the E3200.
-3. Keep both connections available. The helper does not change the Mac's network order or settings; I kept Ethernet first in my working setup.
+- **Wi-Fi + Ethernet — Recommended:** also plug the Mac's Ethernet cable directly into an Ethernet port on the E3200. Keep both connections available.
+- **Wi-Fi only:** leave the Mac's Ethernet cable disconnected. Only the E3200 compatibility fix runs; automatic IPv4 for wired clients is not repaired by this mode.
 
-An Ethernet connection showing a self-assigned `169.254…` address is one symptom this workaround may help with. The Mac's Wi-Fi must already have working IPv4 and be on your home network. [Why both are needed](faq.md#why-does-the-mac-need-wi-fi-and-ethernet-at-the-same-time)
+The helper does not change the Mac's network order or settings. I kept Ethernet first in my full setup. A self-assigned `169.254…` Ethernet address is one symptom the recommended mode may help with. [Why the recommended mode uses both connections](faq.md#why-does-the-mac-need-wi-fi-and-ethernet-at-the-same-time)
 
 ## 3. Have two E3200 details ready
 
@@ -45,37 +44,35 @@ If you need to open the CHR30A, use its usual settings address on your network a
 
 Double-click **Keep Your E3200.command**. It opens a Terminal window with a short setup flow:
 
-1. Choose the Ethernet connection leading to your E3200.
+1. Choose a mode. Press Return for **Wi-Fi + Ethernet — Recommended**. Only that mode asks you to choose the Ethernet connection leading to the E3200.
 2. Confirm the detected router address.
 3. Enter the E3200 MAC address and the unused address you protected.
 4. Confirm you checked the address plan.
 5. Choose an E3200 lease length. **Start with one hour** so you can verify renewal.
 
-The program saves these choices privately, so the next launch can reuse them. If administrator access is requested, enter your Mac's administrator password. Terminal does not show characters as you type a password; press Return afterward.
+The program saves your E3200 settings privately for reuse in either mode. The mode menu appears each time you open the launcher; Return always selects the recommended mode. If you first set up Wi-Fi only and later choose the recommended mode, setup asks for an Ethernet connection and offers your existing E3200 details as defaults. If administrator access is requested, enter your Mac's administrator password. Terminal does not show characters as you type a password; press Return afterward.
 
-Wait for:
+Before starting, **Your setup** lists the selected mode, E3200 IP/MAC, main router, DNS, Mac connections and **E3200 lease offered**. That lease length applies to the extender; ordinary devices' leases come from the main router. The configured offer is not proof of an accepted lease.
 
-```text
-READY: E3200 and Ethernet helpers are running. Ctrl+C stops both.
-```
+Wait for **READY**, which explicitly says either both helpers are running or Wi-Fi-only compatibility is running with the Ethernet IPv4 fix **OFF**.
 
 Mac downloads are community builds: unsigned by an Apple Developer identity and not notarized. If macOS blocks the app, review the download's origin and use [Apple's instructions for opening an app from an unidentified developer](https://support.apple.com/en-us/102445). Do not disable Gatekeeper globally.
 
 ## 5. Check the result
 
 - After the E3200 accepts its address, try opening **its chosen address** in your browser. A number displayed earlier is not proof it has accepted a current lease.
-- Leave an Ethernet device on **automatic/DHCP**. Reconnect or renew that device's Ethernet connection and look for a usable IPv4 address from the CHR30A, rather than only IPv6 or `169.254…`.
-- Try normal websites on that wired device. A successful app on Wi-Fi does not establish that its Ethernet path is working.
+- **In the recommended mode**, leave an Ethernet device on **automatic/DHCP**. Reconnect or renew that device's Ethernet connection and look for a usable IPv4 address from the CHR30A, rather than only IPv6 or `169.254…`.
+- **In the recommended mode**, try normal websites on that wired device. A successful app on Wi-Fi does not establish that its Ethernet path is working.
 - Check renewal and later reconnection too; a single success is not a guarantee of long-term operation.
 
-Leave the helper window open and the Mac awake while relying on this workaround. The managed helper keeps the Mac awake while running; reopen it after restarting the host. Host reboot recovery and multi-day operation of this public release still need field testing.
+Leave the helper window open and the Mac awake while relying on this workaround. The managed helper keeps the Mac awake while running; reopen it after restarting the host. Keep home Wi-Fi connected in either mode, and the Mac Ethernet cable connected in the recommended mode. Host reboot recovery and multi-day operation of this public release still need field testing.
 
 ## Stop or change the setup
 
-**Stop:** press Ctrl+C in the helper's window. Both components stop together. The same executable also has a `--stop` option for troubleshooting.
+**Stop:** press Ctrl+C in the helper's window. Everything started by the selected mode stops together. The same executable also has a `--stop` option for troubleshooting.
 
 **Change saved choices:** open Terminal, drag the executable into it to insert its path, add a space and `--setup`, then press Return. This opens the guided setup again; no code editing is needed.
 
-Logs and the private profile are in `~/Library/Application Support/E3200 CHR30A Helper`. Temporary runtime files are cleaned after a normal stop. A force-killed process can leave files in macOS's temporary area; its supervisor is designed to stop both components when the parent disappears.
+Logs and the private profile are in `~/Library/Application Support/E3200 CHR30A Helper`. Temporary runtime files are cleaned after a normal stop. A force-killed process can leave files in macOS's temporary area; its supervisor is designed to stop everything started by the selected mode when the parent disappears.
 
 Stop the earlier compatibility-only helper before using this combined version. Do not run duplicate DHCP helpers.

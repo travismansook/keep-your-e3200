@@ -6,6 +6,8 @@
 
 My network was CHR30A → coax/MoCA → E3200 → gigabit switch → Ethernet devices. I used a gigabit switch for extra Ethernet ports; you can connect directly to the E3200 without one. My Mac was connected to both the downstream Ethernet and home Wi-Fi. During the investigation, I confirmed that the Mac's Wi-Fi connection was associated with the E3200 radio.
 
+The recommended `full` mode runs both components. The `compatibility` mode runs only the responder on Wi-Fi; no Ethernet forwarder, capture or Ethernet adapter is required. Both modes use the same one-extender compatibility configuration.
+
 The two components have different scopes:
 
 | Component | Scope | Address authority |
@@ -29,7 +31,7 @@ Do not turn this into a broad DHCP server, move the extender responder to the wi
 
 ## Runtime and shutdown
 
-The guided program validates the operator's private settings and both connections. It verifies and copies its bundled components into a private temporary directory, then invokes the existing shell supervisor. A combined worker starts the forwarder first and waits for readiness before starting the extender responder. Either component failing stops both.
+The guided program validates the operator's private settings and the connections required by the selected mode. It verifies and copies its bundled components into a private temporary directory, then invokes the existing shell supervisor. In full mode, the worker starts the forwarder first and waits for readiness before starting the extender responder. Either component failing stops both. In compatibility mode it starts only the extender responder. Both paths retain the same parent watcher and shutdown supervision.
 
 The supervisor handles Ctrl+C, SIGTERM, SIGHUP, stop requests, trial expiry, and parent disappearance. It holds the authority needed to stop its children; cleanup does not require a new sudo prompt. `caffeinate` watches the public parent. Each component has its own process group and bounded shutdown handling. Graceful exit cleans the temporary bundle. A SIGKILL cannot run parent-side filesystem cleanup, so temporary remnants are possible even though the watchdog stops the networking components.
 
@@ -61,7 +63,7 @@ python3 -m venv .venv
 
 Build on a native macOS runner with Apple command-line build tools. The engine is compiled from the pinned, complete modified source. PyInstaller creates one native executable containing Python, the engine, corresponding source and license notices. Native downloads require macOS 15+. Apple Silicon and Intel builds are separate; neither is a Windows/Linux build.
 
-The build startup-tests both the source entry point and frozen executable with `--self-test`. This validates offline filter compilation and dnsmasq configuration parsing, and does not run a live DHCP service. The executable also supports `--version`, `--setup`, `--stop`, `--dry-run`, `--licenses` and `--extract-source NEW_FOLDER`.
+The build startup-tests both the source entry point and frozen executable with `--self-test`. This validates offline filter compilation and dnsmasq configuration parsing, for both modes and does not run a live DHCP service. The executable also supports `--mode full`, `--mode compatibility`, `--version`, `--setup`, `--stop`, `--dry-run`, `--licenses` and `--extract-source NEW_FOLDER`.
 
 ## Sources and boundaries
 
@@ -71,3 +73,5 @@ The build startup-tests both the source entry point and frozen executable with `
 - [Original compatibility-only project](https://github.com/travismansook/e3200-dhcp-helper)
 
 My captures establish a failing path and a working transport workaround on my network. They do not locate the precise dropping branch inside E3200/CHR30A firmware. The project includes no firmware patch, signing bypass, privileged extender access, VPN fix, or vendor-support claim.
+
+Older saved profiles without a mode load as full mode. New Wi-Fi-only profiles can omit Ethernet hardware by storing null adapter fields. Interactive launches always default to the recommended full mode; switching a Wi-Fi-first profile to full mode requires adapter setup. Validation-only runs never prompt for setup or persist mode changes. The startup summary reports configured extender lease duration, separately from main-router client leases.

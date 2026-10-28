@@ -21,9 +21,9 @@ My original forwarder required no per-client entries. The successful manual rene
 
 To make the public release reusable, I replaced my personal interface names, device identities and addresses with validated settings and a guided setup. Those configuration changes and the native downloadable executables need field validation separately from my earlier personal launcher.
 
-Offline tests cover DHCP identity/transaction preservation, the configured extender's exclusion, detector exclusion, real-server matching, unsolicited/mismatched responses, expiry/duplicates, renewal conversion, malformed input, checksums, VLAN parsing and client-MAC matching. Configuration tests cover address-plan validation, duplicate fields, ownership/symlink rules, both connection roles and changed networks. Lifecycle tests use inert child processes and non-elevating shims.
+Offline tests cover DHCP identity/transaction preservation, the configured extender's exclusion, detector exclusion, real-server matching, unsolicited/mismatched responses, expiry/duplicates, renewal conversion, malformed input, checksums, VLAN parsing and client-MAC matching. Configuration tests cover address-plan validation, duplicate fields, ownership/symlink rules, both connection roles and changed networks. Lifecycle tests use inert child processes and non-elevating shims. Mode tests cover old-profile migration, Wi-Fi-only first setup with no Ethernet hardware, saved-setting reuse, switching back to full mode, network validation and the offered-lease summary. Both modes are checked for signal shutdown, component death and parent/terminal disappearance; Wi-Fi-only tests assert that no forwarder starts.
 
-Native builds compile the included engine and run source/frozen `--self-test` checks. These parse configurations and compile capture filters. CI does not start a DHCP listener, transmit real DHCP packets, or change network settings.
+Native builds compile the included engine and run source/frozen `--self-test` checks in both modes. These parse configurations and compile capture filters. CI does not start a DHCP listener, transmit real DHCP packets, or change network settings.
 
 ## Not established by these checks
 
@@ -37,3 +37,5 @@ Native builds compile the included engine and run source/frozen `--self-test` ch
 - Full Verizon-supported SON/mesh integration or an internal firmware repair.
 
 For a new real setup, confirm E3200 lease acceptance, fresh wired-client acquisition, renewal, controlled restart/reacquisition, stable Wi-Fi/coax, clean shutdown, and normal DHCP for unrelated devices. Do not treat READY, a passing build or a single working web page as all of those acceptance checks.
+
+The v0.2.0 mode menu and Wi-Fi-only packaging have offline/native startup validation; they have not been newly exercised on live hardware. The earlier Wi-Fi-side responder and Mac Wi-Fi IPv4 observations provide background evidence, not a new universal Wi-Fi-client test.

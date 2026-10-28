@@ -1,6 +1,7 @@
 """Inert child processes only; these tests never start packet capture or DHCP."""
 from pathlib import Path
 import os
+import itertools
 import shlex
 import signal
 import subprocess
@@ -108,11 +109,41 @@ class LifecycleTests(unittest.TestCase):
     def test_stubborn_children_are_reaped(self):
         self.direct('stubborn', mode='stubborn')
 
+    def test_compatibility_never_starts_forwarder_and_shuts_down(self):
+        cases = [('normal', signal.SIGINT), ('normal', signal.SIGTERM),
+                 ('normal', signal.SIGHUP), ('stubborn', signal.SIGTERM),
+                 ('fail-dnsmasq', None), ('dies', None)]
+        for number, (mode, sig) in enumerate(cases):
+            with self.subTest(mode=mode, signal=sig):
+                d, env, args = self.fixture('compat-' + str(number), mode)
+                args.extend(['--mode', 'compatibility'])
+                logpath = d / 'output.log'
+                with logpath.open('w') as log:
+                    process = subprocess.Popen(args, stdout=log, stderr=subprocess.STDOUT, env=env)
+                    try:
+                        if mode == 'fail-dnsmasq':
+                            self.assertEqual(process.wait(timeout=7), 1)
+                        else:
+                            wait_for(lambda: 'READY: Wi-Fi-only' in logpath.read_text())
+                            self.assertFalse((d / 'bridge.pid').exists())
+                            if mode == 'dies':
+                                os.kill(int((d / 'dnsmasq.pid').read_text()), signal.SIGTERM)
+                            else:
+                                process.send_signal(sig)
+                            self.assertEqual(process.wait(timeout=5), 1 if mode == 'dies' else 0, logpath.read_text())
+                    finally:
+                        if process.poll() is None:
+                            process.terminate()
+                            process.wait(timeout=5)
+                self.assertFalse((d / 'bridge.pid').exists())
+                self.gone(d)
+
     @unittest.skipUnless(sys.platform == 'darwin', 'Darwin parent watcher')
     def test_supervisor_parent_death_stop_request_and_terminal_interrupt(self):
-        for action in ('parent-death', 'stop-request', 'terminal-interrupt'):
-            with self.subTest(action=action):
-                d, env, args = self.fixture(action)
+        for helper_mode, action in itertools.product(('full', 'compatibility'), ('parent-death', 'stop-request', 'terminal-interrupt')):
+            with self.subTest(mode=helper_mode, action=action):
+                d, env, args = self.fixture(helper_mode + '-' + action)
+                args.extend(['--mode', helper_mode])
                 state = d / 'state'
                 state.mkdir()
                 sudo = d / 'sudo-shim'
@@ -138,7 +169,7 @@ except ProcessLookupError:pass
                     process = subprocess.Popen(['/bin/bash', str(launcher)], stdout=log,
                                                stderr=subprocess.STDOUT, env=env, start_new_session=True)
                     try:
-                        wait_for(lambda: (state / 'test.log').exists() and 'READY: E3200 and Ethernet helpers are running.' in (state / 'test.log').read_text())
+                        wait_for(lambda: (state / 'test.log').exists() and 'READY:' in (state / 'test.log').read_text())
                         runtime = next(state.glob('run-*'))
                         if action == 'parent-death':
                             process.kill()

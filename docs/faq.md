@@ -7,10 +7,10 @@
 **A router upgrade does not have to mean losing a useful extender.** The biggest benefit is a chance to keep the E3200 working as an extra Wi-Fi coverage point, with usable Ethernet connections, instead of leaving it unused.
 
 - **An extra extender after your upgrade.** If you keep your E3200 when moving to a CHR30A, you can give it another job covering a room or area that could use a stronger signal. Keep its working coax connection; this helper targets the address-assignment problems in that setup.
-- **Keep wired devices online.** The combined helper gets ordinary Ethernet clients' address requests through to the main router, so they can use automatic IPv4 instead of needing a manual address on each device.
+- **Keep wired devices online in the recommended mode.** The combined helper gets ordinary Ethernet clients' address requests through to the main router, so they can use automatic IPv4 instead of needing a manual address on each device.
 - **Get the E3200's settings page back.** Once the extender accepts its IPv4 address, you can open its network settings at that address again.
 - **Make more use of hardware you already have.** Reusing the E3200 can avoid another extender purchase and keep useful equipment out of storage or the waste stream. Allow for the host computer's electricity costs.
-- **One guided launcher for both problems.** Compatibility help and Ethernet address forwarding start and stop together, without flashing custom firmware or building the program yourself.
+- **One guided launcher for both problems.** In the recommended mode, compatibility help and Ethernet address forwarding start and stop together, without flashing custom firmware or building the program yourself.
 
 ### Why is keeping the old E3200 such a big deal?
 
@@ -28,13 +28,23 @@ The E3200 keeps its original hardware capabilities. This does not upgrade it to 
 
 **What about the G3100?** I have not tested the E3200 with a G3100 to determine whether this setup works wirelessly instead of over coax. The results documented here apply to the CHR30A with coax; the wireless restriction above should not be read as a claim about every Verizon router.
 
+## Can I run it without plugging the Mac in by Ethernet?
+
+**Yes. Choose Wi-Fi only in the launcher's menu.** This mode answers the E3200's compatibility address requests over the Mac's home Wi-Fi. It can address the extender's yellow-light/address problem and restore settings-page access after the extender accepts a lease.
+
+The tradeoff is that **the Ethernet IPv4 fix is off**. Devices plugged into the E3200 may fail to obtain or renew IPv4 automatically. Existing addresses can keep working for a while, so one working website does not prove the wired-address problem is fixed. Choose **Wi-Fi + Ethernet — Recommended** for both fixes.
+
+This does not mean Wi-Fi devices necessarily have the same IPv4 issue. My Mac had working IPv4 over Wi-Fi while associated with the E3200. I have not tested every Wi-Fi client; neither mode acts as a general Wi-Fi-client address server. Ordinary addresses still come from the CHR30A.
+
+The E3200 still needs coax to the CHR30A. Only the **Mac's** Ethernet cable is optional. Your saved E3200 settings are reusable in either mode.
+
 ## Do I need a network switch?
 
-**No. Plug your Mac's Ethernet cable directly into an Ethernet port on the E3200.** I used a gigabit network switch—a box that adds more Ethernet ports—in my own setup because I had several wired devices. It is optional; you do not need to buy one to follow this guide.
+**No. For the recommended mode, plug your Mac's Ethernet cable directly into an Ethernet port on the E3200.** I used a gigabit network switch—a box that adds more Ethernet ports—in my own setup because I had several wired devices. It is optional; you do not need to buy one to follow this guide.
 
 ## Do I need to keep this running all the time?
 
-**Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with its Wi-Fi and Ethernet connections available.
+**Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with home Wi-Fi connected. The recommended mode also needs the Mac Ethernet cable connected.
 
 The helper is needed for address requests, not every internet packet. An existing lease may continue working after you close it, so the effect is not always immediate. New devices, renewals, restarts, or lost addresses can need the helper again.
 
@@ -48,11 +58,11 @@ Start with a **one-hour E3200 lease** while checking that it works and renews. O
 
 **That is a planned option for a future Linux version. The current executable is for Mac and will not run on a Raspberry Pi.**
 
-A Pi is attractive because it is small and can use little power. This workaround needs both Wi-Fi and Ethernet, so a future Pi setup would need both connections and a supported Linux implementation. Some Pi models need an extra Ethernet adapter. Do not buy hardware assuming this release already supports it. [Platform plans →](roadmap.md)
+A Pi is attractive because it is small and can use little power. The full workaround needs both Wi-Fi and Ethernet, so a future Pi setup for both fixes would need both connections and a supported Linux implementation. Some Pi models need an extra Ethernet adapter. Do not buy hardware assuming this release already supports it. [Platform plans →](roadmap.md)
 
 ## What about an old laptop or spare computer?
 
-An already-owned spare Mac can avoid an extra hardware purchase. It needs a supported Mac version, Wi-Fi, Ethernet, and reliable power. Keep the screen off if desired, but keep the computer awake. An adapter may be needed if it has no Ethernet port.
+An already-owned spare Mac can avoid an extra hardware purchase. It needs a supported Mac version, home Wi-Fi and reliable power. The recommended mode also needs Ethernet. Keep the screen off if desired, but keep the computer awake. An adapter may be needed if it has no Ethernet port.
 
 Windows and Linux laptops are planned for later. The old project's Windows/Linux compatibility-only downloads do not include this combined Ethernet workaround.
 
@@ -64,7 +74,7 @@ For illustration, at **20 cents per kWh**, a device averaging **3 watts** all da
 
 ## Why does the Mac need Wi-Fi and Ethernet at the same time?
 
-They have different jobs. Ethernet lets the helper hear address requests on the E3200's wired side. Wi-Fi provides the working path used for the compatibility response and for getting ordinary requests to the real router. The combined setup needs both.
+**The recommended mode needs both; Wi-Fi-only compatibility does not need the Mac cable.** They have different jobs. Ethernet lets the helper hear address requests on the E3200's wired side. Wi-Fi provides the working path used for the compatibility response and for getting ordinary requests to the real router. The combined setup needs both.
 
 Keep the normal network preference that works for you; the helper does not change your connection order, IP settings, router pool, or reservations. I kept Ethernet first for normal internet traffic in my working setup.
 
@@ -74,7 +84,7 @@ The helper only handles DHCP address messages. Downloads, video, and games do no
 
 ## Does it fix the yellow light and the Ethernet ports?
 
-It combines the two relevant workarounds: an E3200-specific compatibility address offer, and forwarding of ordinary wired clients' DHCP exchanges to the CHR30A. It targets the failures I saw on my network.
+In the recommended mode, it combines the two relevant workarounds: an E3200-specific compatibility address offer, and forwarding of ordinary wired clients' DHCP exchanges to the CHR30A. It targets the failures I saw on my network.
 
 **In my setup, the yellow light meant more than a warning on the extender: the E3200 lost internet access, causing connected devices to disconnect.** My earlier backhaul logs showed recovery cycles roughly every **three minutes**, with most disconnected intervals lasting **9–11 seconds**. Those are observations from my setup, not a fixed timer for every E3200. That repeated loss of connectivity was one of the main problems I wanted to solve.
 
@@ -94,7 +104,7 @@ No client list is required for the general forwarder. You configure the E3200 on
 
 ## Can I close the window or shut down the Mac?
 
-Ctrl+C stops both helper components. Closing its terminal window or shutting down the host also makes the helper unavailable. Existing leases might keep working for a time, but later requests can fail. Keep it open if you depend on this workaround.
+Ctrl+C stops everything started by the selected mode. Closing its terminal window or shutting down the host also makes the helper unavailable. Existing leases might keep working for a time, but later requests can fail. Keep it open if you depend on this workaround.
 
 The program keeps the Mac awake while its managed helper is running. It is not an installed startup service, and recovery after host reboot has not been field-verified. Reopen it after restarting the host.
 
@@ -114,4 +124,4 @@ This preview configures one E3200. Run one applicable compatibility responder fo
 
 ## Do I have to build it, install Python, or understand networking?
 
-**Use the executable download in Releases.** Python and the DHCP engine are included. You only need to connect both links, identify the E3200, check its address on your router, and follow the setup questions. The source code and developer build instructions are optional. [Start here →](setup.md)
+**Use the executable download in Releases.** Python and the DHCP engine are included. Choose a mode, connect the Mac as shown, identify the E3200, check its address on your router, and follow the setup questions. The source code and developer build instructions are optional. [Start here →](setup.md)

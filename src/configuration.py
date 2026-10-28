@@ -33,16 +33,25 @@ def address(value):
 
 
 def validate(profile):
-    if not isinstance(profile, dict) or set(profile) != FIELDS:
+    if not isinstance(profile, dict) or set(profile) not in (FIELDS, FIELDS | {'mode'}):
         raise ValueError('The saved settings are incomplete. Run the helper with --setup.')
     result = dict(profile)
+    result.setdefault('mode', 'full')
+    if result['mode'] not in ('full', 'compatibility'):
+        raise ValueError('Choose Full helper or Wi-Fi-only compatibility mode.')
     for key in ('extender_mac', 'ethernet_mac'):
+        if key == 'ethernet_mac' and result[key] is None and result['mode'] == 'compatibility':
+            continue
         result[key] = normalize_mac(result[key])
     if result['extender_mac'] == result['ethernet_mac']:
         raise ValueError('The E3200 and your Mac adapter must have different MAC addresses.')
     for key in ('ethernet_interface', 'wifi_interface'):
+        if key == 'ethernet_interface' and result[key] is None and result['mode'] == 'compatibility':
+            continue
         if not isinstance(result[key], str) or not re.fullmatch(r'en[0-9]+', result[key]):
             raise ValueError('Choose a physical Ethernet or Wi-Fi connection from setup.')
+    if (result['ethernet_interface'] is None) != (result['ethernet_mac'] is None):
+        raise ValueError('The saved Ethernet identity is incomplete. Run --setup.')
     if result['ethernet_interface'] == result['wifi_interface']:
         raise ValueError('Ethernet and Wi-Fi must be two different connections.')
     gateway, extender, dns = (address(result[key]) for key in ('gateway', 'extender_ip', 'dns'))
@@ -131,16 +140,16 @@ def runtime_values(profile, items=None, router=None):
     found = {item['device']: item for item in (connections() if items is None else items)}
     wired = found.get(profile['ethernet_interface'])
     wifi = found.get(profile['wifi_interface'])
-    if not wired or not wired['active'] or wired['wifi'] or wired['mac'] != profile['ethernet_mac']:
+    if profile['mode'] == 'full' and (not wired or not wired['active'] or wired['wifi'] or wired['mac'] != profile['ethernet_mac']):
         raise ValueError('Reconnect the Ethernet adapter selected in setup, or run --setup to choose another.')
     if not wifi or not wifi['active'] or not wifi['wifi'] or not wifi['ip']:
-        raise ValueError('Connect the Mac to your home Wi-Fi as well as Ethernet.')
+        raise ValueError('Connect the Mac to your home Wi-Fi with working IPv4.')
     ip = address(wifi['ip'])
     network = ipaddress.IPv4Network(profile['gateway'] + '/' + profile['subnet_mask'], strict=False)
     actual_router = router_for(wifi['device']) if router is None else router
     if ip not in network or wifi['mask'] != profile['subnet_mask'] or actual_router != profile['gateway']:
         raise ValueError('The Wi-Fi network differs from setup. Reconnect to home Wi-Fi or run --setup.')
-    if str(ip) == profile['extender_ip'] or wired['ip'] == profile['extender_ip']:
+    if any(item.get('ip') == profile['extender_ip'] for item in found.values()):
         raise ValueError('The selected E3200 address is already used by this Mac. Choose another address in setup.')
     return dict(profile, wifi_ip=str(ip), network=str(network.network_address),
                 subnet_hex=hex(int(network.netmask)))

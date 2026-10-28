@@ -4,9 +4,11 @@
 umask 077
 SCRIPT_DIR=$(cd -- "$(dirname -- "$0")" && pwd -P) || exit 1
 STATE_DIR=${E3200_STATE_DIR:?Start the guided helper}
-IFACE=${E3200_ETHERNET:?Start the guided helper}
+HELPER_MODE=${E3200_MODE:-full}
+case "$HELPER_MODE" in full|compatibility) ;; *) exit 1 ;; esac
+IFACE=${E3200_ETHERNET-}
 SERVER_IP=${E3200_SERVER:?Start the guided helper}
-HELPER_MAC=${E3200_ETHERNET_MAC:?Start the guided helper}
+HELPER_MAC=${E3200_ETHERNET_MAC-}
 TRIAL_SECONDS=600
 RUN_SECONDS=600
 MODE=combined-normal
@@ -214,19 +216,21 @@ done
 PYTHON=${E3200_PYTHON:?Start the guided helper}
 [ -x "$PYTHON" ] || die 'The bundled program could not be opened.'
 
-"$PYTHON" "$BRIDGE" --check-only || die 'The forwarding component failed its offline checks.'
+[ "$HELPER_MODE" != full ] || "$PYTHON" "$BRIDGE" --check-only || die 'The forwarding component failed its offline checks.'
 DNSMASQ="$SCRIPT_DIR/dnsmasq"
 [ -x "$DNSMASQ" ] || die 'The included DHCP engine is missing. Download the helper again.'
 EXPECTED_BINARY_SHA256=${E3200_ENGINE_SHA256:?Start the guided helper}
 ACTUAL_BINARY_SHA256=$(/usr/bin/shasum -a 256 "$DNSMASQ" | /usr/bin/awk '{print $1}')
 [ "$ACTUAL_BINARY_SHA256" = "$EXPECTED_BINARY_SHA256" ] || die 'The private DHCP executable differs from the tested build.'
 if [ "$DRY_RUN" = 0 ]; then
+  if [ "$HELPER_MODE" = full ]; then
   CONNECTION_INFO=$(/sbin/ifconfig "$IFACE" 2>/dev/null) || die 'Connect your selected Ethernet adapter directly to an Ethernet port on the E3200.'
   ACTUAL_MAC=$(printf '%s\n' "$CONNECTION_INFO" | awk '$1 == "ether" {print tolower($2); exit}')
   [ "$ACTUAL_MAC" = "$HELPER_MAC" ] || die 'The selected Ethernet adapter changed. Reconnect it or run setup again.'
   printf '%s\n' "$CONNECTION_INFO" | awk '$1 == "status:" && $2 == "active" {found=1} END {exit !found}' || die 'Ethernet link is inactive.'
+  fi
   WIFI_INFO=$(/sbin/ifconfig "$WIFI_IFACE" 2>/dev/null) || die 'Wi-Fi must also be connected for the E3200 compatibility response.'
-  printf '%s\n' "$WIFI_INFO" | awk '$1 == "status:" && $2 == "active" {found=1} END {exit !found}' || die 'Keep Wi-Fi connected for DHCP transport. Ethernet remains the Mac internet connection.'
+  printf '%s\n' "$WIFI_INFO" | awk '$1 == "status:" && $2 == "active" {found=1} END {exit !found}' || die 'Keep home Wi-Fi connected for the selected helper mode.'
   CURRENT_WIFI_IP=$(/usr/sbin/ipconfig getifaddr "$WIFI_IFACE" 2>/dev/null)
   [ "$CURRENT_WIFI_IP" = "$WIFI_IP" ] || die "The helper expects the existing Wi-Fi address $WIFI_IP; found ${CURRENT_WIFI_IP:-none}. No settings were changed."
   WIFI_MASK=$(printf '%s\n' "$WIFI_INFO" | awk -v ip="$WIFI_IP" '$1 == "inet" && $2 == ip {print $4; exit}')
@@ -246,12 +250,14 @@ LOG="$STATE_DIR/combined-$RUN_ID.log"
 LEASES="$STATE_DIR/upstream-only.leases"
 RUN_USER=$(/usr/bin/id -un)
 RUN_GROUP=$(/usr/bin/id -gn)
+EXCLUDE_ETHERNET=""
+if [ "$HELPER_MODE" = full ]; then EXCLUDE_ETHERNET="except-interface=$IFACE"; fi
 cat > "$CONF" <<EOF
 # E3200 only on the previously working Wi-Fi path.
 # CHR30A remains responsible for normal Ethernet/Wi-Fi client DHCP.
 port=0
 interface=$WIFI_IFACE
-except-interface=$IFACE
+$EXCLUDE_ETHERNET
 except-interface=lo0
 bind-interfaces
 user=$RUN_USER
@@ -271,7 +277,8 @@ EOF
 "$DNSMASQ" --test --conf-file="$CONF" || die 'The extender configuration did not validate.'
 if [ "$DRY_RUN" = 1 ]; then
   printf '\nValidated only: no network checks or DHCP service were run.\n'
-  printf 'E3200 compatibility stays on %s; general client forwarding uses the chosen Ethernet and Wi-Fi connections.\n' "$WIFI_IFACE"
+  printf 'Mode: %s. E3200 compatibility stays on %s.\n' "$HELPER_MODE" "$WIFI_IFACE"
+  if [ "$HELPER_MODE" = compatibility ]; then printf 'Ethernet IPv4 forwarding is OFF.\n'; fi
   printf 'Original lease data is preserved. E3200 lease file: %s\n' "$LEASES"
   printf 'Run limit: %s seconds (0 means until stopped). Config: %s\n' "$RUN_SECONDS" "$CONF"
   exit 0
@@ -284,7 +291,7 @@ else
 fi
 "$PYTHON" --check-lock "$FORWARD_LOCK"
 [ "$?" = 0 ] || die 'Stop the other helper with Ctrl+C before starting this one.'
-/usr/bin/sudo -v || die 'Administrator access is needed to run both components.'
+/usr/bin/sudo -v || die 'Administrator access is needed to run the selected helper mode.'
 PORT_USERS=$(/usr/bin/sudo -n /usr/sbin/lsof -nP -iUDP:67 2>&1)
 PORT_STATUS=$?
 case "$PORT_STATUS" in
@@ -319,19 +326,21 @@ else
 fi
 RUN_UID=$(/usr/bin/id -u)
 RUN_GID=$(/usr/bin/id -g)
-printf '\nE3200 + Ethernet DHCP helper\n'
-printf 'One window manages both working components.\n'
-printf 'Keep the Mac on Using DHCP, Ethernet first, and both Ethernet/Wi-Fi connected.\n'
-printf 'The E3200 compatibility response stays on Wi-Fi; ordinary leases come from the CHR30A.\n'
-printf 'Wait for READY: E3200 and Ethernet helpers are running.\n'
-if [ "$RUN_SECONDS" = 0 ]; then
-  printf 'Runs until stopped. Ctrl+C in this window stops both components.\n'
+if [ "$HELPER_MODE" = full ]; then
+  printf '\nFull helper: keep Wi-Fi and Ethernet connected.\n'
+  printf 'Wait for READY: E3200 and Ethernet helpers are running.\n'
 else
-  printf 'Timed run: stops both components after %s seconds.\n' "$RUN_SECONDS"
+  printf '\nWi-Fi-only E3200 compatibility: no Mac Ethernet cable needed.\n'
+  printf 'Ethernet IPv4 forwarding is OFF. Ordinary devices still depend on the CHR30A for addresses.\n'
 fi
-printf 'If either component fails, both are stopped and the error is logged.\n'
+if [ "$RUN_SECONDS" = 0 ]; then
+  printf 'Runs until stopped. Ctrl+C in this window stops the selected helper mode.\n'
+else
+  printf 'Timed run: stops the selected helper mode after %s seconds.\n' "$RUN_SECONDS"
+fi
+printf 'If a selected component fails, the helper stops and the error is logged.\n'
 printf 'Log: %s\n\n' "$LOG"
-run_managed "$LOG" "$PYTHON" "$WORKER" --dnsmasq "$DNSMASQ" --config "$CONF" --bridge "$BRIDGE" --lock-file "$FORWARD_LOCK" --uid "$RUN_UID" --gid "$RUN_GID" --ethernet "$IFACE" --wifi "$WIFI_IFACE" --server "$SERVER_IP" --extender-mac "$E3200_MAC"
+run_managed "$LOG" "$PYTHON" "$WORKER" --mode "$HELPER_MODE" --dnsmasq "$DNSMASQ" --config "$CONF" --bridge "$BRIDGE" --lock-file "$FORWARD_LOCK" --uid "$RUN_UID" --gid "$RUN_GID" --ethernet "$IFACE" --wifi "$WIFI_IFACE" --server "$SERVER_IP" --extender-mac "$E3200_MAC"
 STATUS=$?
 printf '\nCombined helper ended. Log: %s\n' "$LOG"
 exit "$STATUS"

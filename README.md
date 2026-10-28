@@ -39,23 +39,28 @@ Your CHR30A stays the main router. Your devices' normal internet traffic keeps u
 
 Choose **Apple Silicon** for an M-series Mac or **Intel** for an Intel Mac. Requires **macOS 15 or later**. The ZIP contains one file: **Keep Your E3200.command**. No building, Python installation, or code editing is needed.
 
-### 2 · Connect the Mac both ways
+### 2 · Choose how to connect the Mac
 
-Connect it to **your home Wi-Fi**, and plug its **Ethernet cable directly into an Ethernet port on the E3200**. Keep the extender's existing coax connection to the router.
+The launcher offers two modes:
 
-**Coax requirement:** the main CHR30A needs its **MoCA Expansion Module** installed. The E3200 cannot connect wirelessly back to the CHR30A; this tested setup uses coax between them. It still provides Wi-Fi to your devices. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
+| Mode | Mac connections | What it does |
+| --- | --- | --- |
+| **1. Wi-Fi + Ethernet — Recommended** | Home Wi-Fi plus an Ethernet cable directly into the E3200 | Runs the compatibility fix and helps wired devices obtain IPv4 automatically. |
+| **2. Wi-Fi only** | Home Wi-Fi; no Mac Ethernet cable needed | Runs only the E3200 compatibility fix. It does **not** fix wired devices missing IPv4. |
+
+Keep the extender's coax connection to the router in either mode. **The main CHR30A needs its MoCA Expansion Module installed.** Wi-Fi-only refers to the Mac, not a wireless connection between the E3200 and CHR30A. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
 
 ### 3 · Open the helper
 
 Unzip the download and double-click **Keep Your E3200.command**. The guided setup reads your connections and asks for your E3200's MAC address and an unused address you have set aside on the router. It requests administrator access when needed.
 
-Wait for **“READY: E3200 and Ethernet helpers are running.”** Leave the window open and the Mac awake. Press **Ctrl+C** to stop both helpers.
+Choose a mode; pressing Return selects **Wi-Fi + Ethernet — Recommended**. Your setup summary shows the E3200 address, router/DNS, connections and offered lease length. Wait for **READY**, which names the mode running. Leave the window open and the Mac awake. **Ctrl+C** stops everything started by that mode.
 
 **[First-time setup, including Mac's download warning →](docs/setup.md)**
 
 ## Do I need to leave it running?
 
-**Yes—plan to keep the helper running and its host awake, with both connections available.** Devices can need it when they first connect, renew their addresses, restart, or lose a lease. They may keep working for a while after it closes, but that is not a permanent fix.
+**Yes—plan to keep the helper running and its host awake, with the connections required by your selected mode available.** Devices can need it when they first connect, renew their addresses, restart, or lose a lease. They may keep working for a while after it closes, but that is not a permanent fix.
 
 An existing spare Mac can be a practical host. A small Linux computer or **Raspberry Pi** could be a future always-on option, but **this Mac download will not run on a Pi**. Windows, Linux, and Raspberry Pi support are planned for later; they are not included in this release.
 

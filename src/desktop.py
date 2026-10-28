@@ -20,7 +20,7 @@ import configuration as config
 import forwarder
 import combined_worker
 
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 STATE = Path.home() / 'Library/Application Support/E3200 CHR30A Helper'
 RESOURCE = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parents[1] / 'build/package'))
 FILES = {'launcher.command': 0o700, 'forwarder.py': 0o600,
@@ -70,27 +70,68 @@ def ask_value(label, check, default=None):
             print('  ' + str(exc))
 
 
-def setup():
+def choose_mode():
+    print('\n1. Wi-Fi + Ethernet — Recommended (compatibility + Ethernet IPv4 fix)')
+    print('2. Wi-Fi only — E3200 compatibility (no Ethernet IPv4 fix)')
+    def choice(value):
+        if value not in ('1', '2'):
+            raise ValueError('Choose 1 or 2.')
+        return 'full' if value == '1' else 'compatibility'
+    return ask_value('Choose a mode', choice, '1')
+
+
+def show_info(profile):
+    minutes = profile['lease_minutes']
+    if minutes == 525600:
+        duration = '1 year (365 days)'
+    elif minutes % 1440 == 0:
+        days = minutes // 1440
+        duration = str(days) + (' day' if days == 1 else ' days')
+    elif minutes % 60 == 0:
+        hours = minutes // 60
+        duration = str(hours) + (' hour' if hours == 1 else ' hours')
+    else:
+        duration = str(minutes) + ' minutes'
+    print('\nYour setup')
+    print('  Mode: ' + ('Wi-Fi + Ethernet — Recommended' if profile['mode'] == 'full' else 'Wi-Fi-only compatibility'))
+    print('  E3200 address: ' + profile['extender_ip'] + ' (settings page after its lease is accepted)')
+    print('  E3200 MAC: ' + profile['extender_mac'])
+    print('  Main router: ' + profile['gateway'])
+    print('  DNS: ' + profile['dns'])
+    print('  Mac Wi-Fi connection: ' + profile['wifi_interface'])
+    print('  Mac Ethernet connection: ' + (profile['ethernet_interface'] if profile['mode'] == 'full' else 'not required; Ethernet IPv4 fix is OFF'))
+    print('  E3200 lease offered: ' + duration + ' (' + str(minutes) + ' minutes)')
+    print('  Ordinary device leases: controlled by the main router')
+    print('  Run time: until you stop it with Ctrl+C')
+    print('  The lease above is configured; acceptance is confirmed in the E3200 DHCP log.\n')
+
+
+def setup(mode='full', previous=None):
     print('\nKEEP YOUR E3200 · First-time setup\n')
-    print('Connect this Mac to home Wi-Fi and plug its Ethernet cable directly into an Ethernet port on the E3200.')
+    print('Connect this Mac to your home Wi-Fi. The E3200 still needs its coax connection.')
+    if mode == 'full':
+        print('Also plug the Mac Ethernet cable directly into an Ethernet port on the E3200.')
+    previous = previous or {}
     print('The helper reads these connections; it does not change your network settings.\n')
     items = config.connections()
     wifi = [item for item in items if item['wifi'] and item['active'] and item['ip']]
     wired = [item for item in items if not item['wifi'] and item['active']]
-    if len(wifi) != 1 or not wired:
-        raise ValueError('Both connections must be active. Reconnect home Wi-Fi and Ethernet, then reopen the helper.')
+    if len(wifi) != 1 or (mode == 'full' and not wired):
+        raise ValueError('Connect home Wi-Fi with working IPv4, and Ethernet if you selected the recommended mode.')
     wifi = wifi[0]
-    for number, item in enumerate(wired, 1):
-        print(str(number) + '. ' + item['label'] + ' — ' + (item['ip'] or 'waiting for an address'))
-    def choice(value):
-        if value is None or not str(value).isdigit() or not 1 <= int(value) <= len(wired):
-            raise ValueError('Choose one of the connection numbers above.')
-        return wired[int(value) - 1]
-    cable = ask_value('Which Ethernet connection leads to the E3200?', choice, '1' if len(wired) == 1 else None)
+    cable = None
+    if mode == 'full':
+        for number, item in enumerate(wired, 1):
+            print(str(number) + '. ' + item['label'] + ' — ' + (item['ip'] or 'waiting for an address'))
+        def choice(value):
+            if value is None or not str(value).isdigit() or not 1 <= int(value) <= len(wired):
+                raise ValueError('Choose one of the connection numbers above.')
+            return wired[int(value) - 1]
+        cable = ask_value('Which Ethernet connection leads to the E3200?', choice, '1' if len(wired) == 1 else None)
     gateway = ask_value('Main router address', lambda value: str(config.address(value)), config.router_for(wifi['device']))
     print('\nFind the E3200 MAC address on its label or settings page. This identifies the extender, not the Mac adapter.')
-    mac = ask_value('E3200 MAC address', config.normalize_mac)
-    extender = ask_value('Unused address set aside for the E3200 on your router', lambda value: str(config.address(value)))
+    mac = ask_value('E3200 MAC address', config.normalize_mac, previous.get('extender_mac'))
+    extender = ask_value('Unused address set aside for the E3200 on your router', lambda value: str(config.address(value)), previous.get('extender_ip'))
     print('\nBefore starting, check your router: this address must be reserved for this E3200,')
     print('or excluded from automatic assignment, and must not be manually used by another device.')
     if ask('Have you checked and protected that address? Type YES') != 'YES':
@@ -103,7 +144,8 @@ def setup():
     minutes = ask_value('Lease option', lease, '1')
     profile = config.validate(dict(extender_mac=mac, extender_ip=extender, gateway=gateway,
                                   dns=gateway, subnet_mask=wifi['mask'],
-                                  ethernet_interface=cable['device'], ethernet_mac=cable['mac'],
+                                  mode=mode, ethernet_interface=cable['device'] if cable else previous.get('ethernet_interface'),
+                                  ethernet_mac=cable['mac'] if cable else previous.get('ethernet_mac'),
                                   wifi_interface=wifi['device'], lease_minutes=minutes,
                                   address_plan_confirmed=True))
     config.runtime_values(profile, items, gateway)
@@ -139,8 +181,8 @@ def environment(values, folder, state, manifest):
                                + shlex.quote(str(Path(__file__).resolve())) + ' "$@"\n')
         runner_path.chmod(0o700)
         runner = str(runner_path)
-    mapping = dict(STATE_DIR=str(state), ETHERNET=values['ethernet_interface'],
-                   ETHERNET_MAC=values['ethernet_mac'], SERVER=values['gateway'],
+    mapping = dict(STATE_DIR=str(state), MODE=values.get('mode', 'full'), ETHERNET=values['ethernet_interface'] or '',
+                   ETHERNET_MAC=values['ethernet_mac'] or '', SERVER=values['gateway'],
                    MAC=values['extender_mac'], IP=values['extender_ip'],
                    WIFI=values['wifi_interface'], WIFI_IP=values['wifi_ip'],
                    SUBNET_MASK=values['subnet_mask'], SUBNET_HEX=values['subnet_hex'],
@@ -203,7 +245,7 @@ def stop():
     until = time.monotonic() + 12
     while active and time.monotonic() < until:
         if all((folder / 'stopped').is_file() for folder in active):
-            print('Both helpers stopped.')
+            print('The managed helper stopped.')
             return 0
         time.sleep(.1)
     if active:
@@ -220,6 +262,7 @@ def main(args=None):
         return result
     parser = argparse.ArgumentParser(description='Keep Your E3200 — guided CHR30A compatibility and Ethernet helper for Mac.')
     parser.add_argument('--version', action='version', version=VERSION)
+    parser.add_argument('--mode', choices=('full', 'compatibility'), help='full helper or Wi-Fi-only compatibility')
     parser.add_argument('--setup', action='store_true', help='change saved settings')
     parser.add_argument('--stop', action='store_true', help='stop both managed components')
     parser.add_argument('--self-test', action='store_true', help='offline checks only; no network changes')
@@ -241,7 +284,10 @@ def main(args=None):
     if sys.platform != 'darwin':
         raise ValueError('This combined release runs on macOS. Windows and Linux versions are planned.')
     if selected.self_test:
-        return run(config.example(), self_test=True)
+        profile = dict(config.example(), mode=selected.mode or 'full')
+        if profile['mode'] == 'compatibility':
+            profile.update(ethernet_interface=None, ethernet_mac=None)
+        return run(config.validate(profile), self_test=True)
     if selected.stop:
         return stop()
     if os.geteuid() == 0:
@@ -249,13 +295,27 @@ def main(args=None):
     private_folder(STATE)
     if selected.dry_run and not (STATE / 'profile.json').exists():
         raise ValueError('Run first-time setup before validating saved settings, or use --self-test for offline checks.')
-    if selected.setup or not (STATE / 'profile.json').exists():
-        profile = setup()
+    profile = config.load(STATE / 'profile.json') if (STATE / 'profile.json').exists() else None
+    mode = selected.mode or (profile['mode'] if profile else 'full')
+    if not selected.dry_run and selected.mode is None and sys.stdin.isatty():
+        mode = choose_mode()
+    needs_setup = selected.setup or profile is None or (mode == 'full' and not profile['ethernet_interface'])
+    if needs_setup and selected.dry_run:
+        raise ValueError('Run --setup for this mode before validating saved settings.')
+    if needs_setup:
+        profile = setup(mode, profile)
     else:
-        profile = config.load(STATE / 'profile.json')
+        profile = config.validate(dict(profile, mode=mode))
+        if not selected.dry_run:
+            config.save(STATE / 'profile.json', profile)
         print('\nKEEP YOUR E3200\nUsing your saved settings. Use --setup to change them.\n')
-    print('Plan to keep this Mac awake with Wi-Fi and Ethernet connected.')
-    print('Leave this window open. Ctrl+C stops both helpers.\n')
+    show_info(profile)
+    if mode == 'full':
+        print('Full helper: keep the Mac awake with Wi-Fi and Ethernet connected.')
+    else:
+        print('Wi-Fi-only compatibility: keep the Mac awake and connected to home Wi-Fi.')
+        print('The Ethernet IPv4 fix is OFF. This mode answers only the E3200, not ordinary devices.')
+    print('Leave this window open. Ctrl+C stops the selected helper mode.\n')
     return run(profile, dry_run=selected.dry_run)
 
 

@@ -1,26 +1,24 @@
-# Keep Your E3200 v0.1.1 — Mac preview
+# Keep Your E3200 v0.2.0 — Choose your connection mode
 
-A ready-to-open combined helper for two DHCP-related problems when keeping a Verizon E3200 behind a CHR30A: the extender's compatibility/yellow-light condition and wired clients missing automatic IPv4.
+The Mac launcher now lets you choose how to run it:
 
-This update simplifies the setup wording: connect directly to the E3200. A network switch is optional, and the FAQ explains why I used a gigabit switch in my own setup. The address-forwarding behavior is unchanged.
+- **Wi-Fi + Ethernet — Recommended:** E3200 compatibility and automatic IPv4 forwarding for wired devices. Press Return to select this default.
+- **Wi-Fi only:** E3200 compatibility without a Mac Ethernet cable. The Ethernet IPv4 fix is explicitly OFF.
 
-## Download and open
+Both modes still require the E3200's coax connection to the CHR30A. The main router needs its MoCA Expansion Module. Ordinary devices still get their addresses and lease lengths from the main router.
 
-Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac, or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+.
+## Your setup, at a glance
 
-Unzip and open **Keep Your E3200.command**. It is one executable with its runtime included: no building, Python installation or code editing. Connect the Mac to home Wi-Fi and plug its Ethernet cable directly into an Ethernet port on the E3200, then follow the setup questions. Check the extender's chosen address on the router first. Keep the host awake and leave the window open; Ctrl+C stops both components.
+Before startup, the launcher lists the mode, E3200 IP/MAC, router, DNS, connections, offered E3200 lease duration and run time. The configured offer is separate from proof that the extender accepted its lease.
 
-[Setup guide](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/faq.md) · [Behind the scenes](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/behind-the-scenes.md)
+Existing E3200 settings are reusable in either mode. A Wi-Fi-first setup asks for an Ethernet adapter only when you later choose the recommended mode. The mode menu appears on each interactive launch; Ctrl+C stops everything started by the chosen mode.
 
-## What to expect
+## Download
 
-- Guided first-run setup and private saved settings.
-- One E3200-specific compatibility response on Wi-Fi.
-- General Ethernet DHCP forwarding; ordinary addresses still come from the CHR30A.
-- Both components start/stop together; integrity checks and parent monitoring.
-- No supporting files beside the movable executable. Private logs/leases use Application Support.
-- Complete modified dnsmasq corresponding source and license notices included; export with `--extract-source NEW_FOLDER`.
+Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+. Each ZIP contains one **Keep Your E3200.command** executable with Python and the DHCP engine included. No building or Python installation is needed.
 
-Community preview: unsigned by an Apple Developer identity and not notarized. See the setup guide for Apple's app-opening instructions. Offline/native build tests are separate from live network validation. The original workaround worked with my Mac and Stream TV; this generalized release needs more field testing. It is not a firmware upgrade, a fix for every yellow light, or a vendor-supported pairing.
+[Setup guide](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/faq.md) · [Validation](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/validation.md)
 
-**Windows, Linux and Raspberry Pi combined support are planned for later.** Those downloads are not included here. GitHub's automatic Source code links are for developers; end users should choose a named Mac ZIP above.
+Keep the host awake and connected for the selected mode. Community preview: these builds are not notarized or signed with an Apple Developer identity. See the setup guide for Apple's app-opening instructions. Complete modified dnsmasq corresponding source and licenses are embedded; export them with `--extract-source NEW_FOLDER`.
+
+The original workaround worked with my Mac and Stream TV. This release checks both modes offline and starts neither live DHCP nor packet capture in CI. The new menu and Wi-Fi-only packaging still need live field testing. This is not a firmware upgrade, a fix for every yellow light or a vendor-supported pairing. Windows, Linux and Raspberry Pi combined support remain planned.
