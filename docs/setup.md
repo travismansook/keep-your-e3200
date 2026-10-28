@@ -17,7 +17,11 @@ The **Source code** links GitHub adds automatically are for developers. Choose t
 
 ## 2. Connect the equipment
 
-Keep the E3200 connected back to the CHR30A through its existing working coax connection. On the helper Mac:
+**For coax, the main CHR30A router must have its MoCA Expansion Module installed.** It supplies the router's coax connection. Keep the E3200 connected back to it through your home's working coax wiring. [Verizon's module instructions →](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point)
+
+The E3200 cannot connect wirelessly back to the CHR30A. It can still provide Wi-Fi to your devices, but this tested setup needs the coax connection between the extender and main router.
+
+On the helper Mac:
 
 1. Connect **Wi-Fi** to your normal home network.
 2. Plug an **Ethernet cable** from the Mac's Ethernet port or adapter into the E3200, or into the switch attached to the E3200.

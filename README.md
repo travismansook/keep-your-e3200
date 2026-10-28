@@ -42,6 +42,8 @@ Choose **Apple Silicon** for an M-series Mac or **Intel** for an Intel Mac. Requ
 
 Connect it to **your home Wi-Fi**, and plug its **Ethernet cable into the E3200 or its switch**. Keep the extender's existing coax connection to the router.
 
+**Coax requirement:** the main CHR30A needs its **MoCA Expansion Module** installed. The E3200 cannot connect wirelessly back to the CHR30A; this tested setup uses coax between them. It still provides Wi-Fi to your devices. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
+
 ### 3 · Open the helper
 
 Unzip the download and double-click **Keep Your E3200.command**. The guided setup reads your connections and asks for your E3200's MAC address and an unused address you have set aside on the router. It requests administrator access when needed.
