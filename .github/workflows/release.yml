@@ -2,7 +2,7 @@ name: Build ready-to-open Mac downloads
 on:
   push:
     branches: [main]
-    paths: ['VERSION', '.github/workflows/release.yml']
+    paths: ['VERSION', '.github/workflows/release.yml', 'packaging/**']
   workflow_dispatch:
 permissions:
   contents: read

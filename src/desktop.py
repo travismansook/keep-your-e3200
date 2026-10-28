@@ -2,6 +2,7 @@
 """Guided entry point; native downloads also dispatch their bundled workers."""
 import argparse
 import fcntl
+import gzip
 import hashlib
 import json
 import os
@@ -118,6 +119,8 @@ def unpack(destination):
         raise ValueError('The included program manifest is incomplete. Download the helper again.')
     for name, mode in FILES.items():
         data = (runtime / name).read_bytes()
+        if name == 'dnsmasq':
+            data = gzip.decompress(data)
         if hashlib.sha256(data).hexdigest() != manifest[name]:
             raise ValueError('An included program is damaged. Download the helper again.')
         target = destination / name

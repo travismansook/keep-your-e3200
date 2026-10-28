@@ -1,5 +1,6 @@
 """Build and offline-test a native, one-file Mac download. Never start DHCP."""
 import argparse
+import gzip
 import hashlib
 import json
 import os
@@ -66,6 +67,10 @@ def prepare():
     manifest = {file.name: hashlib.sha256(file.read_bytes()).hexdigest()
                 for file in runtime.iterdir() if file.is_file() and file.name != 'manifest.json'}
     (runtime / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    # Keep the engine opaque to the freezer: its Mach-O rewriting/signing would
+    # otherwise change the bytes after the integrity manifest was calculated.
+    # The launcher decompresses it and verifies the original hash before use.
+    (runtime / 'dnsmasq').write_bytes(gzip.compress((runtime / 'dnsmasq').read_bytes(), mtime=0))
     for origin, name in ((ROOT / 'LICENSE', 'Project-LICENSE.txt'),
                          (ROOT / 'THIRD-PARTY-NOTICES.md', 'THIRD-PARTY-NOTICES.md'),
                          (ARCHIVE, ARCHIVE.name),
