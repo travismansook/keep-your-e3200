@@ -76,6 +76,8 @@ The helper only handles DHCP address messages. Downloads, video, and games do no
 
 It combines the two relevant workarounds: an E3200-specific compatibility address offer, and forwarding of ordinary wired clients' DHCP exchanges to the CHR30A. It targets the failures I saw on my network.
 
+**In my setup, the yellow light meant more than a warning on the extender: the E3200 lost internet access, causing connected devices to disconnect.** My earlier backhaul logs showed recovery cycles roughly every **three minutes**, with most disconnected intervals lasting **9–11 seconds**. Those are observations from my setup, not a fixed timer for every E3200. That repeated loss of connectivity was one of the main problems I wanted to solve.
+
 A yellow light can have other causes, such as a real connection or signal problem. Check power and coax/cables too. This is not a repair for a damaged port, broken cable, or every E3200 fault.
 
 ## Does the E3200 assign the wired devices their addresses now?

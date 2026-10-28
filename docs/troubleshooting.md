@@ -10,7 +10,7 @@
 | “The Wi-Fi network differs from setup” | Reconnect to the home network used during setup. If you intentionally changed that network, run `--setup` again. |
 | Another helper is already active | Stop the other helper's Terminal window with Ctrl+C first. Do not start another DHCP service alongside it. |
 | The adapter changed | Reconnect the selected adapter, or run `--setup` to choose a new one. Interface numbers and adapter identities can differ across Macs. |
-| The E3200 remains yellow | Check the actual coax/Ethernet connection, chosen MAC and address plan. Wait for evidence of accepted DHCP, not merely an old displayed address. Other yellow-light causes are outside this workaround. |
+| The E3200 turns yellow and connected devices lose internet access | Check the actual coax/Ethernet connection, chosen MAC and address plan. Wait for evidence of accepted DHCP, not merely an old displayed address. Other yellow-light causes are outside this workaround. |
 | The E3200 page does not open | Use the address you chose for the extender, not the Mac's address. Confirm a recent accepted lease and check the router/device logs. |
 | A wired device still has only IPv6 or `169.254…` | Confirm the helper reached READY, the device is using DHCP, and its cable is connected to an Ethernet port on the E3200. Reconnect that device or renew its lease. Avoid changing all devices to manual addresses. |
 | It worked until the Mac slept, restarted, or the window closed | Reopen the helper and verify both Mac connections. Existing leases can mask that the helper is unavailable until a later request. |

@@ -4,7 +4,7 @@
 
 ## What I observed on my network
 
-My setup uses a CHR30A and an E3200 with hardware version 1103 and firmware 3.8.0.3, joined over coax. My earlier logs showed the extender rejecting a router offer for missing vendor class information; supplying option 60 alone exposed a second rejection for missing option 125. With both compatibility fields, my prototype obtained an accepted lease and restored access to the extender's settings page. The yellow-light cycle cleared during that trial. That is evidence for this DHCP-related condition, not every yellow light.
+My setup uses a CHR30A and an E3200 with hardware version 1103 and firmware 3.8.0.3, joined over coax. My earlier logs showed the extender rejecting a router offer for missing vendor class information; supplying option 60 alone exposed a second rejection for missing option 125. With both compatibility fields, my prototype obtained an accepted lease and restored access to the extender's settings page. My earlier backhaul log recorded 20 disconnect/reconnection cycles; later cycles repeated roughly every three minutes, with most disconnected intervals lasting 9–11 seconds. The yellow-light cycle cleared during the successful compatibility trial. That is evidence for this DHCP-related condition, not every yellow light.
 
 When I investigated the later wired-client issue, I could see native DHCP requests on downstream Ethernet but not on a simultaneous Wi-Fi capture or in the CHR30A server log at corresponding times. Those observations do not pinpoint the exact internal dropping component.
 

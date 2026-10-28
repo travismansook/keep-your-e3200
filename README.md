@@ -13,7 +13,7 @@
 
 I started this project after upgrading my main router from a **CR1000A to a CHR30A**. I wanted to keep using my **E3200 extender connected over coax**, but the equipment no longer worked together as expected.
 
-My E3200 cycled through a yellow-light problem. Its settings page was unreliable. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
+My E3200 cycled through a yellow-light problem. **When it turned yellow, it lost its internet connection, causing devices connected through it to disconnect.** My earlier logs showed the recovery cycle repeating roughly every **three minutes**, with most interruptions lasting **9–11 seconds**. Its settings page was unreliable. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
 
 **I brought the two workarounds that helped on my network into one launcher.**
 
@@ -23,7 +23,7 @@ My E3200 cycled through a yellow-light problem. Its settings page was unreliable
 
 | What you notice | What the helper does |
 | --- | --- |
-| **The E3200 turns yellow or its settings page will not open** because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects, restoring access to its network settings page at its accepted IPv4 address. |
+| **The E3200 turns yellow and loses internet access, causing disconnects, or its settings page will not open** because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects, restoring access to its network settings page at its accepted IPv4 address. |
 | **Ethernet devices say connected, but cannot reach some sites**, and do not get a usable IPv4 address automatically. | Gets their address requests through to the CHR30A and sends the router's replies back to the wired side. |
 
 Your CHR30A stays the main router. Your devices' normal internet traffic keeps using the network directly. The helper handles address messages; it does not put all your traffic through the Mac.

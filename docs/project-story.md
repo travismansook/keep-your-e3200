@@ -2,7 +2,7 @@
 
 [← Back](../README.md)
 
-I wanted to keep using my E3200 after upgrading my main router from a CR1000A to a CHR30A. It was still useful equipment, and I wanted to understand why the new setup stopped working before giving up on it.
+I wanted to keep using my E3200 after upgrading my main router from a CR1000A to a CHR30A. It was still useful equipment, and I wanted to understand why the new setup stopped working before giving up on it. When my E3200 turned yellow, it lost its internet connection and devices connected through it disconnected. The later recovery cycles in my earlier logs repeated roughly every three minutes. Restoring that connection mattered as much as getting the light back to white.
 
 The possibility of keeping it as an extra extender made that worthwhile. If Verizon provides another CHR30A as the replacement access point and lets you retain the E3200, the old extender can cover another area instead of sitting unused. That is a big part of why I wanted to share this project. Replacement costs and return requirements depend on your arrangement with Verizon.
 
