@@ -15,9 +15,10 @@ I started this project after upgrading my main router from a **CR1000A to a CHR3
 
 My E3200 cycled through a yellow-light problem. **When it turned yellow, it lost its internet connection, causing devices connected through it to disconnect.** My earlier logs showed the recovery cycle repeating roughly every **three minutes**, with most interruptions lasting **9–11 seconds**. I couldn’t access the E3200’s network settings page at its IP address. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
 
-**I brought the two workarounds that helped on my network into one launcher.**
+**One helper addresses both problems:**
 
-**Get back into your E3200's network settings.** Once the extender accepts its IPv4 address, you can open its settings page in a browser at the address you chose during setup. The helper addresses the missing-address problem that made that page unreachable.
+- **Keep the E3200 connected and access its settings again.** The compatibility fix addresses the yellow-light disconnect cycle I experienced. Once the extender accepts its IPv4 address, you can open its network settings page at the address you chose during setup.
+- **Get Ethernet devices online automatically.** The Ethernet fix helps devices plugged into the E3200 receive an IPv4 address from the main router, so you do not have to enter an address manually on each device.
 
 ## Two problems. One helper.
 
