@@ -19,6 +19,6 @@ Unzip and open **Keep Your E3200.command**. It is one executable with its runtim
 - No supporting files beside the movable executable. Private logs/leases use Application Support.
 - Complete modified dnsmasq corresponding source and license notices included; export with `--extract-source NEW_FOLDER`.
 
-Community preview: unsigned by an Apple Developer identity and not notarized. See the setup guide for Apple's app-opening instructions. Offline/native build tests are separate from live network validation. The original workaround worked for a Mac and Stream TV; this generalized release needs more field testing. It is not a firmware upgrade, a fix for every yellow light, or a vendor-supported pairing.
+Community preview: unsigned by an Apple Developer identity and not notarized. See the setup guide for Apple's app-opening instructions. Offline/native build tests are separate from live network validation. The original workaround worked with my Mac and Stream TV; this generalized release needs more field testing. It is not a firmware upgrade, a fix for every yellow light, or a vendor-supported pairing.
 
 **Windows, Linux and Raspberry Pi combined support are planned for later.** Those downloads are not included here. GitHub's automatic Source code links are for developers; end users should choose a named Mac ZIP above.

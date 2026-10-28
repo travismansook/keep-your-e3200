@@ -14,9 +14,9 @@
 
 ### Why is keeping the old E3200 such a big deal?
 
-The creator's experience upgrading from a **CR1000A to a CHR30A main router** is a big part of this project's purpose. Verizon may replace the old extender with **another CHR30A acting as an access point**, potentially at no extra charge. If Verizon also lets you keep the E3200, the opportunity is especially useful: **use the replacement access point and put the retained E3200 back to work as an additional extender.** You gain another possible coverage location from equipment you would otherwise stop using.
+In my experience upgrading from a **CR1000A to a CHR30A main router**, keeping the old E3200 is a big part of what makes this project useful. Verizon may replace the old extender with **another CHR30A acting as an access point**, potentially at no extra charge. If Verizon also lets you keep the E3200, the opportunity is especially useful: **use the replacement access point and put the retained E3200 back to work as an additional extender.** You gain another possible coverage location from equipment you would otherwise stop using.
 
-That replacement-and-retention opportunity comes from the creator's experience; it is not a promise of free equipment or permission to keep every Verizon-owned device. Confirm the replacement cost and whether the E3200 must be returned with Verizon for your account. Verizon documents the [CHR30A's router and extender roles](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point), but the E3200 workaround here remains an independent community project.
+That is an opportunity from my experience, not a promise of free equipment or permission to keep every Verizon-owned device. Confirm the replacement cost and whether the E3200 must be returned with Verizon for your account. Verizon documents the [CHR30A's router and extender roles](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point), but the E3200 workaround here remains an independent community project.
 
 The E3200 keeps its original hardware capabilities. This does not upgrade it to Wi-Fi 7 or guarantee better coverage in every home. The helper must remain available, and the public release still needs broader field testing. [What has been tested →](validation.md)
 
@@ -24,9 +24,9 @@ The E3200 keeps its original hardware capabilities. This does not upgrade it to 
 
 **The main CHR30A router needs the MoCA Expansion Module installed.** The module provides its coax connection. Connect the CHR30A and E3200 through your home's working coax wiring. See [Verizon's MoCA module instructions](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point).
 
-**The E3200 cannot connect wirelessly back to the CHR30A.** This project's tested setup uses coax between them; the helper does not replace that physical connection. The E3200 can still provide Wi-Fi to phones, laptops and other devices—the restriction is on its connection back to this main router.
+**The E3200 cannot connect wirelessly back to the CHR30A.** My tested setup uses coax between them; the helper does not replace that physical connection. The E3200 can still provide Wi-Fi to phones, laptops and other devices—the restriction is on its connection back to this main router.
 
-**What about the G3100?** This project has not tested the E3200 with a G3100 to determine how this helper behaves when the extender connects wirelessly instead of over coax. The results documented here apply to the CHR30A with coax; the wireless restriction above should not be read as a claim about every Verizon router.
+**What about the G3100?** I have not tested the E3200 with a G3100 to determine whether this setup works wirelessly instead of over coax. The results documented here apply to the CHR30A with coax; the wireless restriction above should not be read as a claim about every Verizon router.
 
 ## Do I need to keep this running all the time?
 
@@ -62,7 +62,7 @@ For illustration, at **20 cents per kWh**, a device averaging **3 watts** all da
 
 They have different jobs. Ethernet lets the helper hear address requests on the E3200's wired side. Wi-Fi provides the working path used for the compatibility response and for getting ordinary requests to the real router. The combined setup needs both.
 
-Keep the normal network preference that works for you; the helper does not change your connection order, IP settings, router pool, or reservations. The original trial kept Ethernet first for normal internet traffic.
+Keep the normal network preference that works for you; the helper does not change your connection order, IP settings, router pool, or reservations. I kept Ethernet first for normal internet traffic in my working setup.
 
 ## Will this slow down my internet or route everything through my computer?
 
@@ -70,7 +70,7 @@ The helper only handles DHCP address messages. Downloads, video, and games do no
 
 ## Does it fix the yellow light and the Ethernet ports?
 
-It combines the two relevant workarounds: an E3200-specific compatibility address offer, and forwarding of ordinary wired clients' DHCP exchanges to the CHR30A. It can address the failures observed in the original setup.
+It combines the two relevant workarounds: an E3200-specific compatibility address offer, and forwarding of ordinary wired clients' DHCP exchanges to the CHR30A. It targets the failures I saw on my network.
 
 A yellow light can have other causes, such as a real connection or signal problem. Check power and coax/cables too. This is not a repair for a damaged port, broken cable, or every E3200 fault.
 
@@ -80,11 +80,11 @@ A yellow light can have other causes, such as a real connection or signal proble
 
 ## Why did Google work when another website did not?
 
-Having IPv6 can let some services work even when a device is missing usable IPv4. In the original investigation, the TV and Mac had that partial-connectivity pattern on Ethernet. It is a clue, not proof of this exact fault in every home. [Troubleshooting →](troubleshooting.md)
+Having IPv6 can let some services work even when a device is missing usable IPv4. My TV and Mac had that partial-connectivity pattern on Ethernet during the investigation. It is a clue, not proof of this exact fault in every home. [Troubleshooting →](troubleshooting.md)
 
 ## Do I have to add every Ethernet device to the helper?
 
-No client list is required for the general forwarder. You configure the E3200 once; ordinary wired clients keep using automatic DHCP. Live checks in the original setup covered a Mac and Stream TV, not every device or unusual network arrangement.
+No client list is required for the general forwarder. You configure the E3200 once; ordinary wired clients keep using automatic DHCP. I verified the original workaround with my Mac and Stream TV. I have not tested every device or unusual network arrangement.
 
 ## Can I close the window or shut down the Mac?
 

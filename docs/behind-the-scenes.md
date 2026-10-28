@@ -4,7 +4,7 @@
 
 ## The two DHCP paths
 
-The original topology was CHR30A → coax/MoCA → E3200 → Ethernet switch/clients. A Mac was connected to both the downstream Ethernet and home Wi-Fi. The Mac's Wi-Fi association was confirmed against the E3200 radio during the original investigation.
+My network was CHR30A → coax/MoCA → E3200 → Ethernet switch/clients. My Mac was connected to both the downstream Ethernet and home Wi-Fi. During the investigation, I confirmed that the Mac's Wi-Fi connection was associated with the E3200 radio.
 
 The two components have different scopes:
 
@@ -17,13 +17,13 @@ The responder uses dnsmasq with DNS disabled (`port=0`), a static-only range, on
 
 The general forwarder observes DHCP requests on the selected Ethernet connection, preserves the client identity/transaction ID, transmits over the selected Wi-Fi path, and accepts matching replies only from the configured real router. It sends those genuine replies back to Ethernet. It excludes the configured extender and the special detector vendor classes. No ordinary-client address pool or per-client list is created.
 
-For renewal requests with nonzero `ciaddr`, it uses an INIT-REBOOT-style broadcast form requesting the existing address, allowing the real server's response to return through the observed path. This transformation has synthetic coverage; the original live manual-renewal success does not independently prove a natural T1 exchange exercised that branch.
+For renewal requests with nonzero `ciaddr`, it uses an INIT-REBOOT-style broadcast form requesting the existing address, allowing the real server's response to return through the observed path. This transformation has synthetic coverage; the successful live manual renewal on my network does not independently prove a natural T1 exchange exercised that branch.
 
 The forwarder rejects malformed/fragmented input, relayed requests, identity mismatches, unsolicited replies, mismatched servers/transactions and duplicates. Rate limits and bounded transaction caches keep state limited. MAC filtering is scope control, not authentication.
 
 ## Why the compatibility responder stays on Wi-Fi
 
-Moving the E3200-specific compatibility response onto downstream Ethernet caused unwanted backhaul behavior during the original trials. The combined design retains the working Wi-Fi-side scope. Ordinary wired clients receive the CHR30A's replies through the other component.
+During my trials, moving the E3200-specific compatibility response onto downstream Ethernet caused unwanted backhaul behavior. The combined design retains the working Wi-Fi-side scope. Ordinary wired clients receive the CHR30A's replies through the other component.
 
 Do not turn this into a broad DHCP server, move the extender responder to the wired side, or add unrelated interface changes as a convenience. The fact that a Mac is attached to both links does not mean it is configured as an IP router, NAT gateway or general bridge. It transports DHCP only.
 
@@ -33,7 +33,7 @@ The guided program validates the operator's private settings and both connection
 
 The supervisor handles Ctrl+C, SIGTERM, SIGHUP, stop requests, trial expiry, and parent disappearance. It holds the authority needed to stop its children; cleanup does not require a new sudo prompt. `caffeinate` watches the public parent. Each component has its own process group and bounded shutdown handling. Graceful exit cleans the temporary bundle. A SIGKILL cannot run parent-side filesystem cleanup, so temporary remnants are possible even though the watchdog stops the networking components.
 
-Settings, leases, logs and private lock files live under `~/Library/Application Support/E3200 CHR30A Helper`. They are never written beside the executable. The source repository contains examples and synthetic fixtures, not the author's private configuration or raw logs.
+Settings, leases, logs and private lock files live under `~/Library/Application Support/E3200 CHR30A Helper`. They are never written beside the executable. I have included examples and synthetic fixtures in this repository, keeping my private configuration and raw network logs out of it.
 
 ## Repository layout
 
@@ -70,4 +70,4 @@ The build startup-tests both the source entry point and frozen executable with `
 - [Verizon CHR30A compatibility guidance](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point)
 - [Original compatibility-only project](https://github.com/travismansook/e3200-dhcp-helper)
 
-The captures establish a failing path and a working transport workaround in the original network. They do not locate the precise dropping branch inside E3200/CHR30A firmware. The project includes no firmware patch, signing bypass, privileged extender access, VPN fix, or vendor-support claim.
+My captures establish a failing path and a working transport workaround on my network. They do not locate the precise dropping branch inside E3200/CHR30A firmware. The project includes no firmware patch, signing bypass, privileged extender access, VPN fix, or vendor-support claim.

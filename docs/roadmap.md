@@ -10,6 +10,6 @@
 | Linux computers | Planned later. Requires Linux networking implementation and live testing. |
 | Raspberry Pi | Planned as part of Linux support. Both Wi-Fi and Ethernet, privileges, restart recovery and power-loss behavior must be validated. |
 
-The earlier [compatibility-only project](https://github.com/travismansook/e3200-dhcp-helper) has Windows/Linux workflows. Those do not yet implement this project's general Ethernet DHCP forwarder. Reusing its user interface or configuration approach will not by itself establish working combined support.
+My earlier [compatibility-only project](https://github.com/travismansook/e3200-dhcp-helper) has Windows/Linux workflows. Those do not yet implement this project's general Ethernet DHCP forwarder. Reusing its user interface or configuration approach will not by itself establish working combined support.
 
-Future always-on support should include start/stop controls, startup after reboot, safe duplicate-instance handling, clean shutdown, and documented acquisition/renewal/restart tests. No delivery date or support guarantee is implied.
+For future always-on support, I plan to include start/stop controls, startup after reboot, safe duplicate-instance handling, clean shutdown, and documented acquisition/renewal/restart tests. No delivery date or support guarantee is implied.

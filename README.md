@@ -11,11 +11,11 @@
 
 **Switched to a Verizon CHR30A? Keep your E3200—and get its wired devices online again.**
 
-This community helper grew out of a real home-network problem: a new **CHR30A router**, an existing **E3200 extender connected over coax**, and equipment that no longer worked together as expected.
+I started this project after upgrading my main router from a **CR1000A to a CHR30A**. I wanted to keep using my **E3200 extender connected over coax**, but the equipment no longer worked together as expected.
 
-The E3200 cycled through a yellow-light problem. Its settings page was unreliable. Later, devices plugged into the extender or its switch could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
+My E3200 cycled through a yellow-light problem. Its settings page was unreliable. Later, devices plugged into the extender or its switch could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
 
-**One launcher brings together the two workarounds that helped in that setup.**
+**I brought the two workarounds that helped on my network into one launcher.**
 
 **Get back into your E3200's network settings.** Once the extender accepts its IPv4 address, you can open its settings page in a browser at the address you chose during setup. The helper addresses the missing-address problem that made that page unreachable.
 
@@ -28,7 +28,7 @@ The E3200 cycled through a yellow-light problem. Its settings page was unreliabl
 
 Your CHR30A stays the main router. Your devices' normal internet traffic keeps using the network directly. The helper handles address messages; it does not put all your traffic through the Mac.
 
-> **A workaround, with clear limits.** This targets the two address-assignment problems described above. It is not a firmware upgrade or a fix for every yellow light. The original combined setup worked with a Mac and Stream TV; the reusable release needs testing in more homes. [What has been tested →](docs/validation.md)
+> **A workaround, with clear limits.** This targets the two address-assignment problems described above. It is not a firmware upgrade or a fix for every yellow light. The combined workaround worked with my Mac and Stream TV; the reusable release needs testing in more homes. [What has been tested →](docs/validation.md)
 
 ## Download. Open. Follow the questions.
 
@@ -62,7 +62,7 @@ An existing spare Mac can be a practical host. A small Linux computer or **Raspb
 
 ## Which project should I use?
 
-This is the **combined compatibility + Ethernet helper for Mac**. The earlier [E3200 DHCP Helper](https://github.com/travismansook/e3200-dhcp-helper) focuses on the extender's own address/compatibility problem and has separate Windows, Mac, and Linux workflows. Those platform downloads do not contain this new Ethernet forwarder.
+This is the **combined compatibility + Ethernet helper for Mac**. My earlier [E3200 DHCP Helper](https://github.com/travismansook/e3200-dhcp-helper) focuses on the extender's own address/compatibility problem and has separate Windows, Mac, and Linux workflows. Those platform downloads do not contain this new Ethernet forwarder.
 
 Run only one applicable helper at a time. If you already use the earlier program, stop it before starting this one.
 
@@ -73,7 +73,7 @@ Run only one applicable helper at a time. If you already use the earlier program
 - **[Troubleshooting](docs/troubleshooting.md)** — what to check when something does not work.
 - **[Behind the scenes](docs/behind-the-scenes.md)** — the DHCP behavior, design, source, and developer instructions.
 - **[Validation record](docs/validation.md)** — observed results and what still needs field testing.
-- **[Project story](docs/project-story.md)** — how the investigation became this tool.
+- **[Project story](docs/project-story.md)** — why I made this and how the investigation became this tool.
 - **[Roadmap](docs/roadmap.md)** — Windows, Linux, and Raspberry Pi plans.
 
 This project is independent of Verizon. Verizon currently [does not support pairing the CHR30A with previous-generation extenders](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point). The helper does not turn it into a fully supported Verizon mesh system.

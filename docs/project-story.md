@@ -1,13 +1,17 @@
-# Why this project exists
+# Why I made Keep Your E3200
 
 [← Back](../README.md)
 
-The starting point was simple: keep an existing E3200 after upgrading the main router to a CHR30A. Replacing working equipment should not be the first assumption when there is a specific interoperability failure to understand.
+I wanted to keep using my E3200 after upgrading my main router from a CR1000A to a CHR30A. It was still useful equipment, and I wanted to understand why the new setup stopped working before giving up on it.
 
-Device logs showed the extender rejecting address offers that lacked compatibility information. A narrowly scoped responder addressed that first problem. A second investigation then found that wired clients behind the extender could have IPv6 while IPv4 address requests failed. Capturing both paths and comparing router logs led to the combined transport workaround.
+The possibility of keeping it as an extra extender made that worthwhile. If Verizon provides another CHR30A as the replacement access point and lets you retain the E3200, the old extender can cover another area instead of sitting unused. That is a big part of why I wanted to share this project. Replacement costs and return requirements depend on your arrangement with Verizon.
 
-The result is a guided Mac launcher with two coordinated components, private configuration, bounded forwarding state, readiness checks and managed shutdown. The everyday instructions explain symptoms and actions; the protocol and implementation details live separately.
+My E3200's logs showed it rejecting address offers that lacked compatibility information. A responder limited to that extender addressed the first problem and restored access to its settings page. Then I found a second issue: devices plugged into the E3200 or its switch could have IPv6 while their IPv4 address requests failed. Some sites worked, while others would not load.
 
-The engineering work includes packet-level diagnosis, separation of two DHCP roles, preserving the real router as ordinary clients' address authority, lifecycle supervision, reusable configuration validation, native packaging, privacy-conscious examples and explicit validation limits.
+Comparing captures from both network paths with the router's logs led to the combined forwarding workaround. My Mac and Stream TV could obtain IPv4 addresses from the CHR30A again, without manually setting an address on every client.
 
-The original personal setup produced working results for a Mac and Stream TV. Reusable packaging and offline tests make the investigation easier to share; they do not turn it into a universally verified product. Windows, Linux and low-power dedicated hosting are future work.
+I brought both workarounds into one guided Mac launcher. It coordinates the two components, keeps settings private, checks that they are ready, and stops them together. I kept the everyday instructions separate from the protocol and implementation details so you can use the helper without working through the whole investigation.
+
+Behind the scenes, the project covers packet-level diagnosis, two separate DHCP roles, preserving the main router as the source of ordinary clients' addresses, process supervision, configuration validation, native packaging and offline tests.
+
+The original workaround worked on my network with my Mac and Stream TV. The reusable download makes that work easier to share, but I still need broader field testing before claiming it works in every home. Windows, Linux and support for a small dedicated host such as a Raspberry Pi are future work.
