@@ -27,6 +27,7 @@ Native builds compile the included engine and run source/frozen `--self-test` ch
 
 ## Not established by these checks
 
+- E3200 operation with a G3100, including a wireless connection to that router instead of coax; this combination has not been tested by this project.
 - Universal compatibility, every wired client, unusual VLANs or enterprise networks.
 - The newly generalized download's live acquisition and renewal on both Mac architectures.
 - Natural timed renewal/rebinding across a long observation window.

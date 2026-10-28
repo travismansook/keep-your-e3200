@@ -21,6 +21,8 @@ The **Source code** links GitHub adds automatically are for developers. Choose t
 
 The E3200 cannot connect wirelessly back to the CHR30A. It can still provide Wi-Fi to your devices, but this tested setup needs the coax connection between the extender and main router.
 
+This project has not tested an E3200 with a G3100, including a wireless connection back to that router instead of coax. These instructions describe the tested CHR30A setup.
+
 On the helper Mac:
 
 1. Connect **Wi-Fi** to your normal home network.

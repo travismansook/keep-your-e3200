@@ -26,6 +26,8 @@ The E3200 keeps its original hardware capabilities. This does not upgrade it to 
 
 **The E3200 cannot connect wirelessly back to the CHR30A.** This project's tested setup uses coax between them; the helper does not replace that physical connection. The E3200 can still provide Wi-Fi to phones, laptops and other devices—the restriction is on its connection back to this main router.
 
+**What about the G3100?** This project has not tested the E3200 with a G3100 to determine how this helper behaves when the extender connects wirelessly instead of over coax. The results documented here apply to the CHR30A with coax; the wireless restriction above should not be read as a claim about every Verizon router.
+
 ## Do I need to keep this running all the time?
 
 **Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with its Wi-Fi and Ethernet connections available.
