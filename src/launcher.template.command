@@ -221,7 +221,7 @@ EXPECTED_BINARY_SHA256=${E3200_ENGINE_SHA256:?Start the guided helper}
 ACTUAL_BINARY_SHA256=$(/usr/bin/shasum -a 256 "$DNSMASQ" | /usr/bin/awk '{print $1}')
 [ "$ACTUAL_BINARY_SHA256" = "$EXPECTED_BINARY_SHA256" ] || die 'The private DHCP executable differs from the tested build.'
 if [ "$DRY_RUN" = 0 ]; then
-  CONNECTION_INFO=$(/sbin/ifconfig "$IFACE" 2>/dev/null) || die 'Connect your selected Ethernet adapter to the E3200 or its switch.'
+  CONNECTION_INFO=$(/sbin/ifconfig "$IFACE" 2>/dev/null) || die 'Connect your selected Ethernet adapter directly to an Ethernet port on the E3200.'
   ACTUAL_MAC=$(printf '%s\n' "$CONNECTION_INFO" | awk '$1 == "ether" {print tolower($2); exit}')
   [ "$ACTUAL_MAC" = "$HELPER_MAC" ] || die 'The selected Ethernet adapter changed. Reconnect it or run setup again.'
   printf '%s\n' "$CONNECTION_INFO" | awk '$1 == "status:" && $2 == "active" {found=1} END {exit !found}' || die 'Ethernet link is inactive.'

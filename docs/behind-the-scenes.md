@@ -4,7 +4,7 @@
 
 ## The two DHCP paths
 
-My network was CHR30A → coax/MoCA → E3200 → Ethernet switch/clients. My Mac was connected to both the downstream Ethernet and home Wi-Fi. During the investigation, I confirmed that the Mac's Wi-Fi connection was associated with the E3200 radio.
+My network was CHR30A → coax/MoCA → E3200 → gigabit switch → Ethernet devices. I used a gigabit switch for extra Ethernet ports; you can connect directly to the E3200 without one. My Mac was connected to both the downstream Ethernet and home Wi-Fi. During the investigation, I confirmed that the Mac's Wi-Fi connection was associated with the E3200 radio.
 
 The two components have different scopes:
 

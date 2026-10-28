@@ -20,7 +20,7 @@ import configuration as config
 import forwarder
 import combined_worker
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 STATE = Path.home() / 'Library/Application Support/E3200 CHR30A Helper'
 RESOURCE = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parents[1] / 'build/package'))
 FILES = {'launcher.command': 0o700, 'forwarder.py': 0o600,
@@ -72,7 +72,7 @@ def ask_value(label, check, default=None):
 
 def setup():
     print('\nKEEP YOUR E3200 · First-time setup\n')
-    print('Connect this Mac to home Wi-Fi and plug its Ethernet cable into the E3200 or its switch.')
+    print('Connect this Mac to home Wi-Fi and plug its Ethernet cable directly into an Ethernet port on the E3200.')
     print('The helper reads these connections; it does not change your network settings.\n')
     items = config.connections()
     wifi = [item for item in items if item['wifi'] and item['active'] and item['ip']]
@@ -86,7 +86,7 @@ def setup():
         if value is None or not str(value).isdigit() or not 1 <= int(value) <= len(wired):
             raise ValueError('Choose one of the connection numbers above.')
         return wired[int(value) - 1]
-    cable = ask_value('Which cable connection leads to the E3200 or switch?', choice, '1' if len(wired) == 1 else None)
+    cable = ask_value('Which Ethernet connection leads to the E3200?', choice, '1' if len(wired) == 1 else None)
     gateway = ask_value('Main router address', lambda value: str(config.address(value)), config.router_for(wifi['device']))
     print('\nFind the E3200 MAC address on its label or settings page. This identifies the extender, not the Mac adapter.')
     mac = ask_value('E3200 MAC address', config.normalize_mac)

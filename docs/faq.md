@@ -28,6 +28,10 @@ The E3200 keeps its original hardware capabilities. This does not upgrade it to 
 
 **What about the G3100?** I have not tested the E3200 with a G3100 to determine whether this setup works wirelessly instead of over coax. The results documented here apply to the CHR30A with coax; the wireless restriction above should not be read as a claim about every Verizon router.
 
+## Do I need a network switch?
+
+**No. Plug your Mac's Ethernet cable directly into an Ethernet port on the E3200.** I used a gigabit network switch—a box that adds more Ethernet ports—in my own setup because I had several wired devices. It is optional; you do not need to buy one to follow this guide.
+
 ## Do I need to keep this running all the time?
 
 **Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with its Wi-Fi and Ethernet connections available.

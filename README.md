@@ -13,7 +13,7 @@
 
 I started this project after upgrading my main router from a **CR1000A to a CHR30A**. I wanted to keep using my **E3200 extender connected over coax**, but the equipment no longer worked together as expected.
 
-My E3200 cycled through a yellow-light problem. Its settings page was unreliable. Later, devices plugged into the extender or its switch could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
+My E3200 cycled through a yellow-light problem. Its settings page was unreliable. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
 
 **I brought the two workarounds that helped on my network into one launcher.**
 
@@ -40,7 +40,7 @@ Choose **Apple Silicon** for an M-series Mac or **Intel** for an Intel Mac. Requ
 
 ### 2 · Connect the Mac both ways
 
-Connect it to **your home Wi-Fi**, and plug its **Ethernet cable into the E3200 or its switch**. Keep the extender's existing coax connection to the router.
+Connect it to **your home Wi-Fi**, and plug its **Ethernet cable directly into an Ethernet port on the E3200**. Keep the extender's existing coax connection to the router.
 
 **Coax requirement:** the main CHR30A needs its **MoCA Expansion Module** installed. The E3200 cannot connect wirelessly back to the CHR30A; this tested setup uses coax between them. It still provides Wi-Fi to your devices. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
 

@@ -1,12 +1,14 @@
-# Keep Your E3200 v0.1.0 — Mac preview
+# Keep Your E3200 v0.1.1 — Mac preview
 
 A ready-to-open combined helper for two DHCP-related problems when keeping a Verizon E3200 behind a CHR30A: the extender's compatibility/yellow-light condition and wired clients missing automatic IPv4.
+
+This update simplifies the setup wording: connect directly to the E3200. A network switch is optional, and the FAQ explains why I used a gigabit switch in my own setup. The address-forwarding behavior is unchanged.
 
 ## Download and open
 
 Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac, or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+.
 
-Unzip and open **Keep Your E3200.command**. It is one executable with its runtime included: no building, Python installation or code editing. Connect the Mac to home Wi-Fi and to the E3200/switch by Ethernet, then follow the setup questions. Check the extender's chosen address on the router first. Keep the host awake and leave the window open; Ctrl+C stops both components.
+Unzip and open **Keep Your E3200.command**. It is one executable with its runtime included: no building, Python installation or code editing. Connect the Mac to home Wi-Fi and plug its Ethernet cable directly into an Ethernet port on the E3200, then follow the setup questions. Check the extender's chosen address on the router first. Keep the host awake and leave the window open; Ctrl+C stops both components.
 
 [Setup guide](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/faq.md) · [Behind the scenes](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/behind-the-scenes.md)
 

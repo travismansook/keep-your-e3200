@@ -26,7 +26,7 @@ I have not tested an E3200 with a G3100, including a wireless connection back to
 On the helper Mac:
 
 1. Connect **Wi-Fi** to your normal home network.
-2. Plug an **Ethernet cable** from the Mac's Ethernet port or adapter into the E3200, or into the switch attached to the E3200.
+2. Plug an **Ethernet cable** from the Mac's Ethernet port or adapter directly into an Ethernet port on the E3200.
 3. Keep both connections available. The helper does not change the Mac's network order or settings; I kept Ethernet first in my working setup.
 
 An Ethernet connection showing a self-assigned `169.254…` address is one symptom this workaround may help with. The Mac's Wi-Fi must already have working IPv4 and be on your home network. [Why both are needed](faq.md#why-does-the-mac-need-wi-fi-and-ethernet-at-the-same-time)
@@ -45,7 +45,7 @@ If you need to open the CHR30A, use its usual settings address on your network a
 
 Double-click **Keep Your E3200.command**. It opens a Terminal window with a short setup flow:
 
-1. Choose the Ethernet connection leading to your E3200 or switch.
+1. Choose the Ethernet connection leading to your E3200.
 2. Confirm the detected router address.
 3. Enter the E3200 MAC address and the unused address you protected.
 4. Confirm you checked the address plan.
