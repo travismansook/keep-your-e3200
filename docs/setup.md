@@ -4,7 +4,7 @@
 
 ## 1. Choose the executable download
 
-Open [Releases](https://github.com/travismansook/e3200-chr30a-helper/releases/latest). Download the ZIP matching your Mac:
+Open [Releases](https://github.com/travismansook/keep-your-e3200/releases/latest). Download the ZIP matching your Mac:
 
 - **Apple Silicon**: Macs with an Apple M-series chip.
 - **Intel**: Macs with an Intel processor.

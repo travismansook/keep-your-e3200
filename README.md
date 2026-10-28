@@ -1,7 +1,7 @@
 <p align="center"><img src="assets/banner.svg" width="100%" alt="Keep Your E3200 — new CHR30A router, same E3200 extender"></p>
 
 <p align="center">
-  <a href="https://github.com/travismansook/e3200-chr30a-helper/releases/latest"><strong>Download for Mac</strong></a>
+  <a href="https://github.com/travismansook/keep-your-e3200/releases/latest"><strong>Download for Mac</strong></a>
   &nbsp; · &nbsp; <a href="docs/setup.md">Getting started</a>
   &nbsp; · &nbsp; <a href="docs/faq.md">FAQ</a>
   &nbsp; · &nbsp; <a href="docs/behind-the-scenes.md">Behind the scenes</a>
@@ -35,7 +35,7 @@ Your CHR30A stays the main router. Your devices' normal internet traffic keeps u
 
 ### 1 · Download the right Mac file
 
-**[Get the executable from Releases →](https://github.com/travismansook/e3200-chr30a-helper/releases/latest)**
+**[Get the executable from Releases →](https://github.com/travismansook/keep-your-e3200/releases/latest)**
 
 Choose **Apple Silicon** for an M-series Mac or **Intel** for an Intel Mac. Requires **macOS 15 or later**. The ZIP contains one file: **Keep Your E3200.command**. No building, Python installation, or code editing is needed.
 

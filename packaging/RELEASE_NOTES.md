@@ -17,7 +17,7 @@ Existing E3200 settings are reusable in either mode. A Wi-Fi-first setup asks fo
 
 Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+. Each ZIP contains one **Keep Your E3200.command** executable with Python and the DHCP engine included. No building or Python installation is needed.
 
-[Setup guide](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/faq.md) · [Validation](https://github.com/travismansook/e3200-chr30a-helper/blob/main/docs/validation.md)
+[Setup guide](https://github.com/travismansook/keep-your-e3200/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/keep-your-e3200/blob/main/docs/faq.md) · [Validation](https://github.com/travismansook/keep-your-e3200/blob/main/docs/validation.md)
 
 Keep the host awake and connected for the selected mode. Community preview: these builds are not notarized or signed with an Apple Developer identity. See the setup guide for Apple's app-opening instructions. Complete modified dnsmasq corresponding source and licenses are embedded; export them with `--extract-source NEW_FOLDER`.
 
