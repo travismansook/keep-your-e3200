@@ -17,11 +17,13 @@ The E3200 cycled through a yellow-light problem. Its settings page was unreliabl
 
 **One launcher brings together the two workarounds that helped in that setup.**
 
+**Get back into your E3200's network settings.** Once the extender accepts its IPv4 address, you can open its settings page in a browser at the address you chose during setup. The helper addresses the missing-address problem that made that page unreachable.
+
 ## Two problems. One helper.
 
 | What you notice | What the helper does |
 | --- | --- |
-| **The E3200 turns yellow or its settings page will not open** because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects. |
+| **The E3200 turns yellow or its settings page will not open** because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects, restoring access to its network settings page at its accepted IPv4 address. |
 | **Ethernet devices say connected, but cannot reach some sites**, and do not get a usable IPv4 address automatically. | Gets their address requests through to the CHR30A and sends the router's replies back to the wired side. |
 
 Your CHR30A stays the main router. Your devices' normal internet traffic keeps using the network directly. The helper handles address messages; it does not put all your traffic through the Mac.
