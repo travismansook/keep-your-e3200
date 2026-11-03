@@ -2,6 +2,14 @@
 
 [← Back to Keep Your E3200](../README.md)
 
+## Can I keep a VPN running on the helper Mac?
+
+**For now, disconnect it before starting and keep it disconnected until your configuration has been tested.** A VPN may block the helper's direct Wi-Fi internet test or communication with the home router. Reconnecting the VPN after startup may also interrupt operation. The program reminds you about this but never changes VPN settings.
+
+Concurrent operation may be possible if your VPN permits local network traffic and the helper can verify that path. That requires live DHCP testing; removing the current Google check alone would not establish compatibility.
+
+For NordVPN on a trusted home network, one setting to inspect is **Settings → General → Stay invisible on a local network**. NordVPN documents that setting [here](https://support.nordvpn.com/hc/en-us/articles/20225371443345-Staying-invisible-on-unsafe-local-networks-on-macOS). Turning local invisibility off is a possible prerequisite to test, not a verified fix for this helper. NordVPN's [split tunneling page](https://nordvpn.com/features/split-tunneling/) currently lists Windows, Android and Android TV, not macOS, so do not assume the Mac app has an exclusion switch for this program.
+
 ## What are the benefits?
 
 **A router upgrade does not have to mean losing a useful extender.** The biggest benefit is a chance to keep the E3200 working as an extra Wi-Fi coverage point, with usable Ethernet connections, instead of leaving it unused.
@@ -52,7 +60,7 @@ The helper is needed for address requests, not every internet packet. An existin
 
 That is not a reliable substitute for an available helper. A lease has an expiry, and the E3200 normally tries to renew before then. Restarting or losing an address can cause an earlier request.
 
-Start with a **one-hour E3200 lease** while checking that it works and renews. One day or one year can be selected later, but neither removes the need to keep the host available. Changing this setting affects a new or renewed E3200 lease, not a lease it already accepted. The CHR30A controls ordinary devices' leases separately.
+Start with a **one-hour E3200 lease** while checking that it works and renews. In **Home → Settings → Change lease duration**, choose a new duration and confirm it with **yes**. One day or one year can be selected later, but neither removes the need to keep the host available. Changing this setting affects a new or renewed E3200 lease, not a lease it already accepted. The CHR30A controls ordinary devices' leases separately.
 
 ## Could I leave it running on a Raspberry Pi?
 

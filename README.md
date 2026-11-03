@@ -60,9 +60,13 @@ Keep the extender's coax connection to the router in either mode. **The main CHR
 
 ### 3 · Open the helper
 
-Unzip the download and double-click **Keep Your E3200.command**. The guided setup reads your connections and asks for your E3200's MAC address and an unused address you have set aside on the router. It requests administrator access when needed.
+Unzip the download and double-click **Keep Your E3200.command**. Setup asks for your main router address, the **LAN1 MAC** printed on the E3200's rear sticker under **Serial#**, and an address reserved on the router for the extender's settings page. **[Where to find these details and how to reserve the address →](docs/setup.md#3-find-the-details-the-helper-asks-for)** It requests administrator access when needed.
 
-Choose a mode; pressing Return selects **Wi-Fi + Ethernet — Recommended**. Your setup summary shows the E3200 address, router/DNS, connections and offered lease length. Wait for **READY**, which names the mode running. Leave the window open and the Mac awake. **Ctrl+C** stops everything started by that mode.
+At each question, **type your answer and press Return**. A value in **[brackets]** is the default; press Return to accept it. The helper waits for your answer before continuing.
+
+After first-time setup, Home offers **Start helper**, **Settings**, **Quit**, and **Help and troubleshooting**. Settings lets you review saved values or change the E3200 lease with confirmation.
+
+Choose a mode by typing **1** for **Wi-Fi + Ethernet — Recommended** or **2** for **Wi-Fi only**, then press Return. The opening menu requires an explicit choice. Your setup summary shows the E3200 address, router/DNS, connections and offered lease length. Wait for **READY**, which names the mode running. Leave the window open and the Mac awake. **Ctrl+C** stops everything started by that mode and returns Home. The helper is stopped while you are at Home.
 
 **[First-time setup, including Mac's download warning →](docs/setup.md)**
 

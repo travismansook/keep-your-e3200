@@ -3,6 +3,7 @@ from pathlib import Path
 import socket
 import struct
 import unittest
+from unittest.mock import patch
 
 path = Path(__file__).resolve().parents[1] / 'src/forwarder.py'
 spec = importlib.util.spec_from_file_location('bridge', path)
@@ -13,6 +14,20 @@ EXTENDER = bytes.fromhex('020000000002')
 CLIENT = bytes.fromhex('020000000010')
 OTHER = bytes.fromhex('020000000017')
 WIFI = bytes.fromhex('020000000012')
+
+
+class ReconnectionIdentityTests(unittest.TestCase):
+    def test_reconnect_requires_the_same_adapter(self):
+        with patch.object(b, 'interface_info', return_value=(CLIENT, '169.254.1.1')):
+            self.assertEqual(b.ethernet_info('en90', CLIENT), (CLIENT, '169.254.1.1'))
+            with self.assertRaises(b.ReconnectRequired):
+                b.ethernet_info('en90', WIFI)
+
+    def test_inactive_or_missing_adapter_requests_reconnect(self):
+        for error in (RuntimeError('inactive'), b.subprocess.CalledProcessError(1, 'ifconfig')):
+            with self.subTest(error=error), patch.object(b, 'interface_info', side_effect=error):
+                with self.assertRaises(b.ReconnectRequired):
+                    b.ethernet_info('en90', CLIENT)
 
 
 def message(kind=1, mac=CLIENT, xid=17, ciaddr=b.ZERO, server=None, extra=()):

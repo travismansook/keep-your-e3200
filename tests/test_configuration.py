@@ -15,6 +15,15 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(c.validate(profile), profile)
         self.assertEqual(c.normalize_mac('02-00-00-00-00-AA'), '02:00:00:00:00:aa')
 
+    def test_sticker_mac_formats_and_invalid_values(self):
+        for text in ('02.00.00.00.00.AA', '02:00:00:00:00:aa', '02-00-00-00-00-AA'):
+            with self.subTest(text=text):
+                self.assertEqual(c.normalize_mac(text), '02:00:00:00:00:aa')
+        for text in ('02.00.00.00.00', '02.00.00.00.00.AA.BB', '02.00.00.00.00.GG',
+                     'FF.FF.FF.FF.FF.FF', '00.00.00.00.00.00', '03.00.00.00.00.02'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                c.normalize_mac(text)
+
     def test_invalid_identity_and_network_values(self):
         for field, value in [('extender_mac', 'ff:ff:ff:ff:ff:ff'),
                              ('extender_mac', '00:00:00:00:00:00'),

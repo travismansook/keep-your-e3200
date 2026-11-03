@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import tempfile
 
 FIELDS = {'extender_mac', 'extender_ip', 'gateway', 'dns', 'subnet_mask',
           'ethernet_interface', 'ethernet_mac', 'wifi_interface',
@@ -12,9 +13,9 @@ FIELDS = {'extender_mac', 'extender_ip', 'gateway', 'dns', 'subnet_mask',
 
 
 def normalize_mac(value):
-    if not isinstance(value, str) or not re.fullmatch(r'[0-9a-fA-F]{2}([:-][0-9a-fA-F]{2}){5}', value):
-        raise ValueError('Use the six pairs on the device label, such as 02:00:00:00:00:02.')
-    raw = bytes.fromhex(value.replace(':', '').replace('-', ''))
+    if not isinstance(value, str) or not re.fullmatch(r'[0-9a-fA-F]{2}([:.\-][0-9a-fA-F]{2}){5}', value):
+        raise ValueError('Enter six pairs from LAN1 MAC, using dots, colons, or hyphens (example: 02.00.00.00.00.02).')
+    raw = bytes.fromhex(value.replace(':', '').replace('-', '').replace('.', ''))
     if raw == b'\0' * 6 or raw[0] & 1:
         raise ValueError('That is not a usable device MAC address.')
     return raw.hex(':')
@@ -92,12 +93,20 @@ def save(path, profile):
     profile = validate(profile)
     if path.parent.is_symlink() or not path.parent.is_dir() or path.parent.stat().st_uid != os.getuid():
         raise ValueError('Use the private settings folder created by this helper.')
-    flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | os.O_TRUNC
-    fd = os.open(path, flags, 0o600)
-    with os.fdopen(fd, 'w') as output:
-        os.fchmod(output.fileno(), 0o600)
-        json.dump(profile, output, indent=2)
-        output.write('\n')
+    if path.is_symlink() or (path.exists() and (not path.is_file() or path.stat().st_uid != os.getuid())):
+        raise OSError('The saved settings have an unexpected type or owner.')
+    fd, temporary = tempfile.mkstemp(prefix='.profile-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w') as output:
+            os.fchmod(output.fileno(), 0o600)
+            json.dump(profile, output, indent=2)
+            output.write('\n')
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def output(arguments):

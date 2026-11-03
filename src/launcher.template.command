@@ -64,7 +64,7 @@ trap 'exit 129' HUP
 die() {
   printf '\nStopped: %s\n' "$*" >&2
   if [ -t 0 ] && [ "$DRY_RUN" = 0 ]; then
-    read -r -p 'Press Return to close. ' _
+    read -r -p 'Press Return to continue. ' _
   fi
   exit 1
 }
@@ -236,7 +236,13 @@ if [ "$DRY_RUN" = 0 ]; then
   WIFI_MASK=$(printf '%s\n' "$WIFI_INFO" | awk -v ip="$WIFI_IP" '$1 == "inet" && $2 == ip {print $4; exit}')
   [ "$WIFI_MASK" = "$SUBNET_HEX" ] || [ "$WIFI_MASK" = "$SUBNET_MASK" ] || die 'The Wi-Fi network changed. Run setup again for your home network.'
   printf '\nChecking the Mac Wi-Fi control connection...\n'
-  /usr/bin/curl --interface "$WIFI_IFACE" -4 --connect-timeout 3 --max-time 6 -f -sS -o /dev/null https://www.google.com/generate_204 || die 'The Wi-Fi control connection has no IPv4 internet. No helper was started.'
+  if ! /usr/bin/curl --interface "$WIFI_IFACE" -4 --connect-timeout 3 --max-time 6 -f -sS -o /dev/null https://www.google.com/generate_204; then
+    printf '\nThe direct Wi-Fi IPv4 check could not reach Google.\n'
+    printf 'This does not by itself prove that your internet is offline.\n'
+    printf 'If a VPN is running on this Mac, disconnect it and reopen the helper.\n'
+    printf 'Also check that home Wi-Fi can load websites. A timeout or a blocked test site can cause this failure.\n'
+    die 'Wi-Fi startup check failed. No helper was started; network and VPN settings were not changed.'
+  fi
 fi
 if [ -e "$STATE_DIR" ] || [ -L "$STATE_DIR" ]; then
   [ ! -L "$STATE_DIR" ] && [ -d "$STATE_DIR" ] && [ -O "$STATE_DIR" ] || die 'Use a normal data folder owned by your account.'
@@ -338,9 +344,9 @@ if [ "$RUN_SECONDS" = 0 ]; then
 else
   printf 'Timed run: stops the selected helper mode after %s seconds.\n' "$RUN_SECONDS"
 fi
-printf 'If a selected component fails, the helper stops and the error is logged.\n'
+printf 'Recoverable Ethernet disconnects are retried. Other failures may stop the helper; details are logged.\n'
 printf 'Log: %s\n\n' "$LOG"
-run_managed "$LOG" "$PYTHON" "$WORKER" --mode "$HELPER_MODE" --dnsmasq "$DNSMASQ" --config "$CONF" --bridge "$BRIDGE" --lock-file "$FORWARD_LOCK" --uid "$RUN_UID" --gid "$RUN_GID" --ethernet "$IFACE" --wifi "$WIFI_IFACE" --server "$SERVER_IP" --extender-mac "$E3200_MAC"
+run_managed "$LOG" "$PYTHON" "$WORKER" --mode "$HELPER_MODE" --dnsmasq "$DNSMASQ" --config "$CONF" --bridge "$BRIDGE" --lock-file "$FORWARD_LOCK" --uid "$RUN_UID" --gid "$RUN_GID" --ethernet "$IFACE" --ethernet-mac "$HELPER_MAC" --wifi "$WIFI_IFACE" --server "$SERVER_IP" --extender-mac "$E3200_MAC"
 STATUS=$?
 printf '\nCombined helper ended. Log: %s\n' "$LOG"
 exit "$STATUS"

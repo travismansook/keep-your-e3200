@@ -18,11 +18,16 @@ role=ROLE
 d=Path(os.environ['E3200_TEST_DIRECTORY'])
 (d/(role+'.pid')).write_text(str(os.getpid()))
 mode=os.environ.get('E3200_TEST_MODE','normal')
+if mode=='reconnect' and role=='bridge':
+ with (d/'bridge-runs').open('a') as out:out.write(str(os.getpid())+'\\n')
+ if (d/'unplugged').exists():sys.exit(75)
 if mode=='fail-'+role:sys.exit(7)
 print('FORWARDER READY: mock' if role=='bridge' else 'dnsmasq: started, version mock',flush=True)
 if mode=='stubborn':signal.signal(signal.SIGTERM,signal.SIG_IGN)
 else:signal.signal(signal.SIGTERM,lambda *_:sys.exit(0))
-while True:time.sleep(.03)
+while True:
+ if mode=='reconnect' and role=='bridge' and (d/'unplugged').exists():sys.exit(75)
+ time.sleep(.03)
 '''
 
 
@@ -97,6 +102,60 @@ class LifecycleTests(unittest.TestCase):
         for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
             with self.subTest(signal=sig):
                 self.direct('signal-' + str(sig), signum=sig)
+
+    def test_reconnects_repeatedly_without_restarting_extender(self):
+        d, env, args = self.fixture('reconnect', 'reconnect')
+        logpath = d / 'output.log'
+        with logpath.open('w') as log:
+            process = subprocess.Popen(args, stdout=log, stderr=subprocess.STDOUT, env=env)
+            try:
+                wait_for(lambda: 'READY: E3200 and Ethernet' in logpath.read_text())
+                extender_pid = int((d / 'dnsmasq.pid').read_text())
+                for cycle in range(2):
+                    old_bridge = int((d / 'bridge.pid').read_text())
+                    (d / 'unplugged').touch()
+                    wait_for(lambda: not alive(old_bridge))
+                    self.assertTrue(alive(extender_pid))
+                    self.assertIsNone(process.poll())
+                    (d / 'unplugged').unlink()
+                    wait_for(lambda: int((d / 'bridge.pid').read_text()) != old_bridge)
+                    wait_for(lambda: logpath.read_text().count('Automatic IPv4 forwarding resumed.') >= cycle + 1)
+                    self.assertEqual(int((d / 'dnsmasq.pid').read_text()), extender_pid)
+                self.assertIn('Automatic IPv4 forwarding resumed.', logpath.read_text())
+                self.assertIn('E3200 compatibility is still running over Wi-Fi.', logpath.read_text())
+                # Shutdown must remain responsive during an unplugged wait.
+                last_bridge = int((d / 'bridge.pid').read_text())
+                (d / 'unplugged').touch()
+                wait_for(lambda: not alive(last_bridge))
+                wait_for(lambda: logpath.read_text().count('Ethernet is paused.') >= 3)
+                process.send_signal(signal.SIGINT)
+                self.assertEqual(process.wait(timeout=5), 0)
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    process.wait(timeout=5)
+        self.gone(d)
+        for pid in (d / 'bridge-runs').read_text().splitlines():
+            self.assertFalse(alive(int(pid)))
+
+    def test_startup_can_wait_for_ethernet_and_cancel(self):
+        d, env, args = self.fixture('waiting', 'reconnect')
+        (d / 'unplugged').touch()
+        logpath = d / 'output.log'
+        with logpath.open('w') as log:
+            process = subprocess.Popen(args, stdout=log, stderr=subprocess.STDOUT, env=env)
+            try:
+                wait_for(lambda: 'Ethernet is paused.' in logpath.read_text())
+                self.assertFalse((d / 'dnsmasq.pid').exists())
+                self.assertIn('E3200 compatibility will start after Ethernet is ready.', logpath.read_text())
+                self.assertNotIn('E3200 compatibility is still running', logpath.read_text())
+                process.send_signal(signal.SIGTERM)
+                self.assertEqual(process.wait(timeout=5), 0)
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    process.wait(timeout=5)
+        self.gone(d)
 
     def test_startup_failures(self):
         self.direct('bridge-fails', mode='fail-bridge')

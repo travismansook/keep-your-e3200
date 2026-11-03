@@ -69,13 +69,19 @@ class ModeTests(unittest.TestCase):
             self.assertEqual(config.load(Path(directory) / 'profile.json')['mode'], 'compatibility')
         self.assertFalse(any('Which Ethernet' in q for q in questions))
 
-    def test_recommended_menu_is_default_and_saved_settings_are_reused(self):
-        with patch('builtins.input', return_value=''), redirect_stdout(io.StringIO()) as out:
-            self.assertEqual(desktop.choose_mode(), 'full')
-            self.assertIn('Recommended', out.getvalue())
+    def test_mode_requires_valid_explicit_input(self):
+        for valid, mode in (('1', 'full'), ('2', 'compatibility')):
+            with self.subTest(valid=valid), patch('builtins.input', side_effect=['', '  ', '3', 'invalid', valid]) as read, \
+                 redirect_stdout(io.StringIO()) as out:
+                self.assertEqual(desktop.choose_mode(), mode)
+                self.assertEqual(read.call_count, 5)
+                self.assertIn('Nothing has been selected.', out.getvalue())
+                self.assertNotIn('[1]', read.call_args.args[0])
+
+    def test_saved_settings_are_reused_after_mode_choice(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(desktop, 'STATE', Path(directory)), \
              patch.object(desktop.sys, 'platform', 'darwin'), patch.object(desktop.sys.stdin, 'isatty', return_value=True), \
-             patch('builtins.input', return_value='2'), patch.object(desktop, 'run', return_value=0) as run, \
+             patch('builtins.input', side_effect=['1', '2']), patch.object(desktop, 'run', return_value=0) as run, \
              patch.object(desktop, 'setup') as setup, redirect_stdout(io.StringIO()):
             old = config.example()
             old.pop('mode')
@@ -90,12 +96,25 @@ class ModeTests(unittest.TestCase):
     def test_wifi_first_user_must_choose_adapter_before_full_mode(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(desktop, 'STATE', Path(directory)), \
              patch.object(desktop.sys, 'platform', 'darwin'), patch.object(desktop.sys.stdin, 'isatty', return_value=True), \
-             patch('builtins.input', return_value=''), patch.object(desktop, 'run', return_value=0), \
+             patch('builtins.input', side_effect=['1', '1']), patch.object(desktop, 'run', return_value=0), \
              patch.object(desktop, 'setup', return_value=config.example()) as setup, redirect_stdout(io.StringIO()):
             profile = self.compatible()
             config.save(Path(directory) / 'profile.json', profile)
             desktop.main([])
             setup.assert_called_once_with('full', profile)
+
+    def test_dotted_sticker_mac_and_in_place_address_help(self):
+        answers = iter(['', '02.00.00.00.00.AA', '?', '192.0.2.250', 'YES', ''])
+        with tempfile.TemporaryDirectory() as directory, patch.object(desktop, 'STATE', Path(directory)), \
+             patch.object(config, 'connections', return_value=[wifi()]), \
+             patch.object(config, 'router_for', return_value='192.0.2.1'), \
+             patch('builtins.input', side_effect=lambda _: next(answers)), redirect_stdout(io.StringIO()) as out:
+            profile = desktop.setup('compatibility')
+            self.assertEqual(profile['extender_mac'], '02:00:00:00:00:aa')
+            self.assertEqual(profile['extender_ip'], '192.0.2.250')
+            self.assertIn('Start IP Address', out.getvalue())
+            self.assertIn('Serial#', out.getvalue())
+            self.assertEqual(config.load(Path(directory) / 'profile.json')['extender_mac'], '02:00:00:00:00:aa')
 
     def test_dry_run_never_invokes_setup_or_saves_a_mode_change(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(desktop, 'STATE', Path(directory)), \

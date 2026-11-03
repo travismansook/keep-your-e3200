@@ -8,6 +8,7 @@ import argparse
 import collections
 import ctypes as C
 import ctypes.util
+import errno
 import fcntl
 import hashlib
 import ipaddress
@@ -30,6 +31,20 @@ NAMES = {1: 'DISCOVER', 2: 'OFFER', 3: 'REQUEST', 4: 'DECLINE',
          5: 'ACK', 6: 'NAK', 7: 'RELEASE', 8: 'INFORM'}
 IP_BOUND_IF = 25
 IP_RECVIF = 20
+
+
+class ReconnectRequired(RuntimeError):
+    """Release stale handles; the privileged supervisor can reopen them."""
+
+
+def ethernet_info(name, expected=None):
+    try:
+        mac, address = interface_info(name)
+    except (RuntimeError, subprocess.CalledProcessError) as exc:
+        raise ReconnectRequired('Ethernet disconnected; waiting for the selected adapter') from exc
+    if expected is not None and mac != expected:
+        raise ReconnectRequired('Waiting for the original Ethernet adapter; a different adapter is connected')
+    return mac, address
 
 
 def log(message):
@@ -279,7 +294,7 @@ class Capture:
             if result == 0:
                 return
             if result != 1:
-                raise RuntimeError('Capture ended or interface disconnected')
+                raise ReconnectRequired('Capture ended; reopening the network connections')
             if header.contents.caplen <= 4096:
                 yield C.string_at(data, header.contents.caplen)
 
@@ -356,6 +371,7 @@ def filters(server):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ethernet')
+    parser.add_argument('--ethernet-mac')
     parser.add_argument('--wifi')
     parser.add_argument('--server', default='192.168.1.1')
     parser.add_argument('--check-only', action='store_true')
@@ -400,13 +416,18 @@ def main():
     except BlockingIOError:
         os.close(lock_fd)
         raise RuntimeError('Another copy of this forwarder is already running')
-    _, own_ip = interface_info(args.ethernet)
-    wifi_mac, _ = interface_info(args.wifi)
+    expected_mac = bytes.fromhex(normalize_mac(args.ethernet_mac).replace(':', '')) if args.ethernet_mac else None
     resources = []
     running = [True]
     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
         signal.signal(sig, lambda *_: running.__setitem__(0, False))
     try:
+        actual_mac, own_ip = ethernet_info(args.ethernet, expected_mac)
+        expected_mac = actual_mac
+        ethernet_index = socket.if_nametoindex(args.ethernet)
+        if not own_ip:
+            raise ReconnectRequired('Waiting for an Ethernet address, including self-assigned')
+        wifi_mac, _ = interface_info(args.wifi)
         delivery = RawDelivery(args.ethernet)
         resources.append(delivery)
         delivery.self_test(own_ip)
@@ -420,7 +441,13 @@ def main():
         gate = Gate(server, extender)
         log('FORWARDER READY: router assigns ordinary client leases; E3200 is excluded')
         counts = collections.Counter()
+        next_link_check = 0
         while running[0]:
+            if time.monotonic() >= next_link_check:
+                ethernet_info(args.ethernet, expected_mac)
+                if socket.if_nametoindex(args.ethernet) != ethernet_index:
+                    raise ReconnectRequired('Ethernet adapter returned with a new interface index')
+                next_link_check = time.monotonic() + 1
             readable, _, _ = select.select([ethernet.fd, wifi.fd], [], [], .2)
             for capture in (ethernet, wifi):
                 if capture.fd not in readable:
@@ -451,6 +478,14 @@ def main():
                                 (NAMES[parsed['msg']], parsed['mac'].hex(':'), parsed['xid'],
                                  socket.inet_ntoa(payload[16:20])))
         log('STOPPED: requests=%d router-replies=%d' % (counts['requests'], counts['replies']))
+    except ReconnectRequired as exc:
+        log('WAITING FOR ETHERNET: ' + str(exc))
+        return 75
+    except OSError as exc:
+        if isinstance(exc, TimeoutError) or exc.errno in (errno.ENETDOWN, errno.ENODEV, errno.ENXIO, errno.ENETUNREACH):
+            log('WAITING FOR ETHERNET: network connection changed; reopening connections')
+            return 75
+        raise
     finally:
         for resource in reversed(resources):
             resource.close()

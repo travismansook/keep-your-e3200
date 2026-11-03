@@ -1,24 +1,32 @@
-# Keep Your E3200 v0.2.0 — Choose your connection mode
+# Keep Your E3200 v0.3.0 — Easier setup, settings and reconnection
 
-The Mac launcher now lets you choose how to run it:
+Keep using your E3200 with a CHR30A, with clearer setup and easier day-to-day controls.
 
-- **Wi-Fi + Ethernet — Recommended:** E3200 compatibility and automatic IPv4 forwarding for wired devices. Press Return to select this default.
-- **Wi-Fi only:** E3200 compatibility without a Mac Ethernet cable. The Ethernet IPv4 fix is explicitly OFF.
+## What changed
 
-Both modes still require the E3200's coax connection to the CHR30A. The main router needs its MoCA Expansion Module. Ordinary devices still get their addresses and lease lengths from the main router.
+- **Home and Settings:** review your saved setup, change only the E3200 lease duration, run full setup again, or find help and your log folder. Review stays visible until you press Return.
+- **Confirmed lease changes:** see the current and proposed durations before saving. Yes/no confirmation accepts either letter case; cancel leaves your settings unchanged. Changes affect future offers after restarting the helper, not leases already accepted.
+- **Ethernet reconnects:** in the recommended mode, a recoverable disconnect pauses forwarding and retries the same selected adapter automatically. E3200 compatibility stays running over Wi-Fi if it had already started. The waiting message explains recognition delays and what to try if reconnection fails.
+- **Clearer setup:** required mode selection, LAN1 MAC sticker instructions, dotted/colon/hyphen MAC support, address-reservation help and error-specific guidance. Backspace cannot erase the question label.
+- **Better navigation and recovery:** Ctrl+C stops this helper and returns Home; setup supports cancel; mode selection supports Back. Setup preserves the existing lease and matching adapter defaults. Errors offer Retry, Home or Quit, and saved settings use atomic replacement.
+- **VPN guidance:** startup reminds you to disconnect a VPN on the helper Mac. A failed Wi-Fi test now explains possible VPN/timeout causes rather than claiming the Mac definitely has no IPv4 internet.
 
-## Your setup, at a glance
+The full compact technical logs remain visible. The CHR30A still assigns ordinary devices' addresses and leases.
 
-Before startup, the launcher lists the mode, E3200 IP/MAC, router, DNS, connections, offered E3200 lease duration and run time. The configured offer is separate from proof that the extender accepted its lease.
+## Download and update
 
-Existing E3200 settings are reusable in either mode. A Wi-Fi-first setup asks for an Ethernet adapter only when you later choose the recommended mode. The mode menu appears on each interactive launch; Ctrl+C stops everything started by the chosen mode.
+Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+. Extract the ZIP and open its single **Keep Your E3200.command** file. Python and the DHCP engine are included.
 
-## Download
+Stop the older helper before opening the new one. Existing saved settings are reused; you do not need to delete them. Once configured, choose **Start helper**, **Settings**, **Quit**, or **Help and troubleshooting** from Home.
 
-Choose **Keep-Your-E3200-macOS-AppleSilicon.zip** for an M-series Mac or **Keep-Your-E3200-macOS-Intel.zip** for an Intel Mac. Requires macOS 15+. Each ZIP contains one **Keep Your E3200.command** executable with Python and the DHCP engine included. No building or Python installation is needed.
+Both modes need home Wi-Fi with working IPv4. Recommended mode also uses Mac Ethernet. The E3200 still needs its coax connection to the CHR30A and the router's MoCA Expansion Module. Keep the helper window open while relying on it. **Home stops the helper; it does not run in the background there.**
+
+## Checks and limits
+
+62 automated checks cover configuration, terminal input, navigation, confirmation, cancellation, persistence, simulated reconnects, shutdown and DHCP packet handling. The release workflow builds both Mac architectures and requires source and frozen offline startup checks in both connection modes before publishing. These are not live-network acceptance tests.
+
+My original workaround worked with my Mac and Stream TV. Broader live compatibility, natural timed renewal and multi-day operation still need field testing. Concurrent Mac VPN operation is not validated. This remains a community preview, not a firmware upgrade or Verizon-supported pairing. Windows, Linux and Raspberry Pi combined support remain planned.
+
+The downloads are not notarized or signed with an Apple Developer identity. Modified dnsmasq corresponding source and licenses are embedded; export them with `--extract-source NEW_FOLDER`.
 
 [Setup guide](https://github.com/travismansook/keep-your-e3200/blob/main/docs/setup.md) · [FAQ](https://github.com/travismansook/keep-your-e3200/blob/main/docs/faq.md) · [Validation](https://github.com/travismansook/keep-your-e3200/blob/main/docs/validation.md)
-
-Keep the host awake and connected for the selected mode. Community preview: these builds are not notarized or signed with an Apple Developer identity. See the setup guide for Apple's app-opening instructions. Complete modified dnsmasq corresponding source and licenses are embedded; export them with `--extract-source NEW_FOLDER`.
-
-The original workaround worked with my Mac and Stream TV. This release checks both modes offline and starts neither live DHCP nor packet capture in CI. The new menu and Wi-Fi-only packaging still need live field testing. This is not a firmware upgrade, a fix for every yellow light or a vendor-supported pairing. Windows, Linux and Raspberry Pi combined support remain planned.

@@ -39,3 +39,9 @@ Native builds compile the included engine and run source/frozen `--self-test` ch
 For a new real setup, confirm E3200 lease acceptance, fresh wired-client acquisition, renewal, controlled restart/reacquisition, stable Wi-Fi/coax, clean shutdown, and normal DHCP for unrelated devices. Do not treat READY, a passing build or a single working web page as all of those acceptance checks.
 
 The v0.2.0 mode menu and Wi-Fi-only packaging have offline/native startup validation; they have not been newly exercised on live hardware. The earlier Wi-Fi-side responder and Mac Wi-Fi IPv4 observations provide background evidence, not a new universal Wi-Fi-client test.
+
+## v0.3.0 launcher and reconnect checks
+
+The update adds 62 automated checks in total, including real-terminal input/navigation checks and inert-process reconnect/shutdown tests. The simulated reconnect tests confirm that the E3200 component retains its process while forwarding restarts, the selected adapter identity is checked, and shutdown remains responsive while waiting. Settings tests cover review pauses, yes/no confirmation, cancel, unchanged selections, atomic saving and simulated save failures. Recovery tests cover setup cancellation, Back, Help, damaged-profile handling, preserved defaults and Retry/Home choices.
+
+Native release builds must pass source and frozen offline startup checks for both connection modes on Apple Silicon and Intel before publishing. These checks do not establish live DHCP or VPN compatibility. Home intentionally stops the helper. See the [launcher QoL review](qol-review.md) for the review scope.
