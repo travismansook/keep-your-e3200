@@ -27,6 +27,8 @@ class LinuxPackageTests(unittest.TestCase):
     def test_deb_contents_and_preview_bundle_checksums(self):
         with tempfile.TemporaryDirectory() as directory:
             package,bundle=builder.build(directory)
+            self.assertRegex(package.name, r'^[A-Za-z0-9_.-]+$')
+            self.assertNotIn('~', package.name)
             chunks=members(package.read_bytes())
             self.assertEqual(chunks['debian-binary'],b'2.0\n')
             with tarfile.open(fileobj=io.BytesIO(chunks['control.tar.gz']),mode='r:gz') as control:

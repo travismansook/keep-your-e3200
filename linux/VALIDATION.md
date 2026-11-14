@@ -34,6 +34,12 @@ Preview3 updates the package/guide/release preparation under a fresh version ins
 
 On November 14, the [Linux build and packet checks](https://github.com/travismansook/keep-your-e3200/actions/runs/43567482692) passed for commit `86ea61244fd183ddd4b0847a19f0bb8d12f27dab`. GitHub ran all **105 tests** on Ubuntu 24.04, built and inspected the .deb, verified release checksums, and passed the isolated DHCP OFFER, ACK, renewal and local UDP delivery/interface tests. The separate [offline checks](https://github.com/travismansook/keep-your-e3200/actions/runs/43567482716) also passed. This is Linux kernel/packaging evidence; it does not replace a real Pi reboot, Wi-Fi recovery or fresh E3200 compatibility-lease test.
 
+## GitHub download filename correction — preview4
+
+The preview3 publication exposed a packaging issue: GitHub renamed the tilde in the .deb asset filename, leaving the typed guide URL and filename-based checksum list inconsistent. Preview4 replaces the tilde only in the downloadable filename, keeps the Debian control version as `0.1.0~preview4`, and updates the guide/release links together. A package regression check now rejects download filenames outside letters, numbers, dots, underscores and hyphens. The old release is superseded; runtime packet handling is unchanged.
+
+The release workflow checks the corrected package and publishes it under a new version, without overwriting preview3 assets. Final publication verification must check GitHub's actual asset names against the guide URLs and the released checksum file. The live Pi update/recovery tests remain outstanding.
+
 ## Earlier development checks — preview1, November 13
 
 - The full automated suite passed **99 tests** after adding the initial Linux implementation and packaging checks.

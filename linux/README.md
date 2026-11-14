@@ -6,7 +6,7 @@ Keep the E3200 useful with a CHR30A. This version moves the compatibility respon
 
 **Community preview with initial Raspberry Pi 4 testing.** I installed the first preview on my Pi 4 with 1 GB RAM, passed the isolated Linux DHCP delivery test, and confirmed that an actual Ethernet device received IPv4 and internet access. Reboot recovery, cable reconnection, a fresh E3200 compatibility lease and longer-term renewals still need verification. No custom extender firmware is installed. [Testing record →](VALIDATION.md)
 
-The GitHub candidate, **0.1.0~preview3**, includes the live-log menu, clearer address/startup messages, saved setup defaults and update fixes. Its updated package still needs its own Pi trial. The Mac and Linux/Pi downloads are in the same repo, with separate versions.
+The GitHub candidate, **0.1.0~preview4**, includes the live-log menu, clearer address/startup messages, saved setup defaults and update fixes. Its updated package still needs its own Pi trial. The Mac and Linux/Pi downloads are in the same repo, with separate versions.
 
 ## What you need
 
@@ -35,14 +35,14 @@ If `.local` doesn't resolve, find e3200-pi in the router's device list and use i
 
 ## Download and install — no compiling
 
-**Recommended: use the single .deb installer** from the [Linux/Pi preview release](https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview3). Choose **keep-your-e3200_0.1.0~preview3_all.deb**. It installs the application and lets the package manager handle dependencies.
+**Recommended: use the single .deb installer** from the [Linux/Pi preview release](https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview4). Choose **keep-your-e3200_0.1.0-preview4_all.deb**. It installs the application and lets the package manager handle dependencies.
 
 On the Pi/Linux Terminal, you can download and install it directly:
 
 ```sh
 cd ~
-wget "https://github.com/travismansook/keep-your-e3200/releases/download/linux-v0.1.0-preview3/keep-your-e3200_0.1.0~preview3_all.deb"
-sudo apt install ./keep-your-e3200_0.1.0~preview3_all.deb
+wget "https://github.com/travismansook/keep-your-e3200/releases/download/linux-v0.1.0-preview4/keep-your-e3200_0.1.0-preview4_all.deb"
+sudo apt install ./keep-your-e3200_0.1.0-preview4_all.deb
 ```
 
 If `wget` is unavailable, install it with `sudo apt install wget`, or use the Mac copy method below. The package asks for confirmation before installing. No compiling, OS reinstall or separate Python setup is needed.
@@ -53,13 +53,13 @@ If `wget` is unavailable, install it with `sudo apt install wget`, or use the Ma
 Assuming it is in Downloads, run this in a **Mac Terminal window**, replacing `yourname` with your Pi username:
 
 ```sh
-scp ~/Downloads/keep-your-e3200_0.1.0~preview3_all.deb yourname@e3200-pi.local:~/
+scp ~/Downloads/keep-your-e3200_0.1.0-preview4_all.deb yourname@e3200-pi.local:~/
 ```
 
 Then, in the Pi's Terminal session:
 
 ```sh
-sudo apt install ~/keep-your-e3200_0.1.0~preview3_all.deb
+sudo apt install ~/keep-your-e3200_0.1.0-preview4_all.deb
 ```
 
 </details>
@@ -164,7 +164,7 @@ You do not compile this application and do not reflash the microSD for app updat
 **Download the newer .deb and install it with the same apt command.** For this release:
 
 ```sh
-sudo apt install ./keep-your-e3200_0.1.0~preview3_all.deb
+sudo apt install ./keep-your-e3200_0.1.0-preview4_all.deb
 ```
 
 Use the path where you downloaded the file. Quit an old menu with **0**, then reopen `keep-your-e3200` to load the updated application. Your settings and leases are kept; a previously running helper is restarted, and the boot preference is preserved. Check Status for current readiness. First installations remain stopped and disabled.

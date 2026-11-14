@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/travismansook/keep-your-e3200/releases/latest"><strong>Download for Mac</strong></a>
-  &nbsp; · &nbsp; <a href="https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview3"><strong>Download for Linux / Raspberry Pi</strong></a>
+  &nbsp; · &nbsp; <a href="https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview4"><strong>Download for Linux / Raspberry Pi</strong></a>
   &nbsp; · &nbsp; <a href="docs/faq.md">FAQ</a>
   &nbsp; · &nbsp; <a href="docs/behind-the-scenes.md">Behind the scenes</a>
 </p>
@@ -56,7 +56,7 @@ Setup asks for the **LAN1 MAC** printed on the back of your E3200 under **Serial
 
 ### On Linux or a Raspberry Pi
 
-1. [Download the Linux/Pi .deb](https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview3).
+1. [Download the Linux/Pi .deb](https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview4).
 2. Install it using the [step-by-step Linux guide](linux/README.md). The installer handles the required software; you do not compile anything.
 3. Run **`keep-your-e3200`** to open Home. It includes setup, settings, start/stop, status and **live logs**.
 

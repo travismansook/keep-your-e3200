@@ -1,22 +1,26 @@
-# Keep Your E3200 — Linux / Raspberry Pi 0.1.0-preview3
+# Keep Your E3200 — Linux / Raspberry Pi 0.1.0-preview4
 
-An always-on Linux/Pi option for keeping an E3200 useful with a CHR30A. This is the first public Linux release candidate, including the local preview's menu and quality-of-life improvements. Mac downloads remain separate in this same repository.
+An always-on Linux/Pi option for keeping an E3200 useful with a CHR30A. This preview includes the local build's menu and quality-of-life improvements, with a corrected installer filename for GitHub downloads. Mac downloads remain separate in this same repository.
 
 ## Download the installer
 
-Choose **keep-your-e3200_0.1.0~preview3_all.deb** for Raspberry Pi OS Lite 64-bit or compatible Debian-based Linux with NetworkManager and systemd. No building or compiling is required. The package manager installs the required software.
+Choose **keep-your-e3200_0.1.0-preview4_all.deb** for Raspberry Pi OS Lite 64-bit or compatible Debian-based Linux with NetworkManager and systemd. No building or compiling is required. The package manager installs the required software.
 
 The optional **Keep-Your-E3200-Linux-Preview.tar.gz** includes the ready-made .deb, installer wrapper, guide and relevant source. **SHA256SUMS.txt** contains the release-file checksums. GitHub's automatic source archives are optional developer downloads.
 
 Install the downloaded package:
 
 ```sh
-sudo apt install ./keep-your-e3200_0.1.0~preview3_all.deb
+sudo apt install ./keep-your-e3200_0.1.0-preview4_all.deb
 ```
 
 For a first installation, follow the [Linux/Pi setup guide](https://github.com/travismansook/keep-your-e3200/blob/main/linux/README.md). Installation leaves the helper stopped and boot startup disabled until you configure and start it. Stop any older Mac/compatibility helper before starting the Pi helper for the same E3200.
 
 For an update, install the newer .deb the same way. Saved settings and leases are kept, boot preference is preserved, and a previously running service is restarted. Quit an old menu and reopen `keep-your-e3200` afterward. You do not reflash the microSD or repeat setup.
+
+## Download filename correction
+
+GitHub normalized the tilde in preview3's installer asset name. Preview4 uses the download-safe filename **keep-your-e3200_0.1.0-preview4_all.deb**, while its internal Debian package version remains **0.1.0~preview4** for correct prerelease upgrade ordering. The guide, direct download links and checksums use the same filename.
 
 ## What is included
 

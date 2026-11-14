@@ -65,7 +65,8 @@ def build(output=None):
              ' not start or enable the service. Preview; broader field testing remains.\n').encode()
     controls=[('control',control,0o644),('md5sums',''.join(hashlib.md5(body).hexdigest()+'  '+name+'\n' for name,body,_ in data).encode(),0o644)]
     controls.extend((name,(ROOT/'linux'/name).read_bytes(),0o755) for name in ('preinst','postinst','prerm','postrm'))
-    package=output/('keep-your-e3200_'+version+'_all.deb')
+    # Keep Debian's tilde in control metadata; GitHub normalizes it in asset names.
+    package=output/('keep-your-e3200_'+version.replace('~','-')+'_all.deb')
     package.write_bytes(b'!<arch>\n'+ar_member('debian-binary',b'2.0\n')+
                         ar_member('control.tar.gz',tar_bytes(controls))+ar_member('data.tar.gz',tar_bytes(data)))
     bundle=[(name,(ROOT/name).read_bytes(),0o644) for name in

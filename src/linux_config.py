@@ -12,7 +12,7 @@ STATE = Path('/var/lib/keep-your-e3200')
 RUNTIME = Path('/run/keep-your-e3200')
 UNIT = 'keep-your-e3200.service'
 USER = 'e3200-helper'
-VERSION = '0.1.0~preview3'
+VERSION = '0.1.0~preview4'
 FIELDS = {'version', 'mode', 'wifi_interface', 'wifi_mac', 'ethernet_interface', 'ethernet_mac',
           'gateway', 'subnet_mask', 'home_router_mac', 'extender_mac', 'extender_ip',
           'lease_minutes', 'address_plan_confirmed'}
