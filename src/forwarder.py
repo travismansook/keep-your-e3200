@@ -310,6 +310,9 @@ class Capture:
 
 
 def interface_info(name):
+    if sys.platform == 'linux':
+        from linux_network import interface_info as linux_interface_info
+        return linux_interface_info(name)
     if not re.fullmatch(r'en[0-9]+', name):
         raise ValueError('Unsupported interface name')
     text = subprocess.check_output(['/sbin/ifconfig', name], text=True)
@@ -401,8 +404,8 @@ def main():
     if not args.ethernet or not args.wifi or not args.extender_mac:
         raise ValueError('Start the guided helper to select both connections and your extender')
     extender = bytes.fromhex(normalize_mac(args.extender_mac).replace(':', ''))
-    if sys.platform != 'darwin' or os.geteuid() != 0:
-        raise RuntimeError('Use the guided Mac launcher for the required capture permissions')
+    if sys.platform not in ('darwin', 'linux') or os.geteuid() != 0:
+        raise RuntimeError('Use the guided launcher for the required capture permissions')
     if args.uid is None or args.uid <= 0 or args.gid is None or args.gid < 0:
         raise RuntimeError('A non-root runtime user must be provided')
     if not args.lock_file:
@@ -428,7 +431,11 @@ def main():
         if not own_ip:
             raise ReconnectRequired('Waiting for an Ethernet address, including self-assigned')
         wifi_mac, _ = interface_info(args.wifi)
-        delivery = RawDelivery(args.ethernet)
+        if sys.platform == 'linux':
+            from linux_network import RawDelivery as Delivery
+        else:
+            Delivery = RawDelivery
+        delivery = Delivery(args.ethernet)
         resources.append(delivery)
         delivery.self_test(own_ip)
         ethernet = Capture(lib, args.ethernet, expressions[0])
@@ -482,7 +489,10 @@ def main():
         log('WAITING FOR ETHERNET: ' + str(exc))
         return 75
     except OSError as exc:
-        if isinstance(exc, TimeoutError) or exc.errno in (errno.ENETDOWN, errno.ENODEV, errno.ENXIO, errno.ENETUNREACH):
+        retry_errors = (errno.ENETDOWN, errno.ENODEV, errno.ENXIO, errno.ENETUNREACH)
+        if sys.platform == 'linux':
+            retry_errors += (errno.EHOSTUNREACH, errno.EADDRNOTAVAIL)
+        if isinstance(exc, TimeoutError) or exc.errno in retry_errors:
             log('WAITING FOR ETHERNET: network connection changed; reopening connections')
             return 75
         raise

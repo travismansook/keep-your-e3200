@@ -14,4 +14,4 @@ I brought both workarounds into one guided Mac launcher. It coordinates the two 
 
 Behind the scenes, the project covers packet-level diagnosis, two separate DHCP roles, preserving the main router as the source of ordinary clients' addresses, process supervision, configuration validation, native packaging and offline tests.
 
-The original workaround worked on my network with my Mac and Stream TV. The reusable download makes that work easier to share, but I still need broader field testing before claiming it works in every home. Windows, Linux and support for a small dedicated host such as a Raspberry Pi are future work.
+The original workaround worked on my network with my Mac and Stream TV. I then added a Linux/Pi preview so a dedicated computer could keep the helper available. My first Pi 4 trial passed the isolated packet test and got an actual Ethernet client online. The updated preview and longer-term recovery still need testing. Mac and Linux/Pi downloads belong to this same project; Windows support remains future work. I still need broader field testing before claiming it works in every home.

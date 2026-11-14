@@ -1,6 +1,8 @@
 # When something does not work
 
-[← Back](../README.md) · [Setup](setup.md) · [FAQ](faq.md)
+[← Back](../README.md) · [Mac setup](setup.md) · [Linux/Pi setup](../linux/README.md) · [FAQ](faq.md)
+
+## Mac
 
 | What you see | What to try |
 | --- | --- |
@@ -15,12 +17,26 @@
 | A wired device still has only IPv6 or `169.254…` | Confirm **Wi-Fi + Ethernet** mode reached READY, the device is using DHCP, and its cable is connected to an Ethernet port on the E3200. Reconnect that device or renew its lease. Avoid changing all devices to manual addresses. |
 | It worked until the Mac slept, restarted, or the window closed | Reopen the helper and verify the Mac connections required by your selected mode. Existing leases can mask that the helper is unavailable until a later request. |
 
+## Linux / Raspberry Pi
+
+| What you see | What to try |
+| --- | --- |
+| The service is active but components are still starting | Wait a few seconds and check **3 · Status** again. Active means the supervisor exists; its report explains which components are ready. Open **13 · View live logs** if it persists. |
+| Compatibility is running; Ethernet is waiting | Reconnect the selected cable/adapter to the E3200. The helper retries automatically. A local-only 169.254 address on the Pi's dedicated Ethernet connection is expected. |
+| Waiting for home Wi-Fi | Keep the Pi on the configured home network. The helper verifies the router before resuming. After an intentional router change, stop the helper and review Setup. |
+| An ordinary wired device has only IPv6 or a self-assigned address | Confirm both components are running, the client uses automatic addressing, and its cable reaches the E3200. Renew its lease or reconnect it. |
+| No saved setup or a damaged report | The message explains the next step. Use **4 · Setup** for missing settings, or live logs when current component readiness is unknown. |
+| The old menu is still visible after an update | Quit the old menu with **0**, then run `keep-your-e3200` again. Check the version and retained settings. |
+| A helper does not start automatically after reboot | Check **3 · Status**. Choose **7** to enable future startup after testing; choose **1** to start a currently stopped helper. |
+
+[Full Pi guide and daily controls →](../linux/README.md)
+
 ## What READY means
 
 The selected mode completed its startup checks and its component(s) started. Wi-Fi-only READY explicitly says the Ethernet IPv4 fix is OFF. It does **not** prove that your particular extender has accepted a lease or that every client works. Verify acquisition, renewal and reconnection on your own equipment.
 
 ## Asking for help
 
-Use the issue template and share your router/extender models, Mac chip/macOS version, release version, which connections are in use, and the exact symptom. Remove real IP/MAC addresses, passwords, serial numbers and other private information from logs or screenshots before posting them.
+Use the issue template and share your router/extender models, host model and operating-system version, helper release version, which connections are in use, and the exact symptom. Remove real IP/MAC addresses, passwords, serial numbers and other private information from logs or screenshots before posting them.
 
-The helper does not automatically change your router pool, reservations, DNS configuration or network priority. It should not be used to mask a physical network fault. The public combined release is a preview; more live testing is needed.
+The helper does not automatically change your router pool or reservations. The Mac helper leaves network settings unchanged. On Linux/Pi, the explicit Prepare Ethernet action creates only the selected adapter's dedicated local-only profile, with internet kept on Wi-Fi. It should not be used to mask a physical network fault. The public combined release is a preview; more live testing is needed.

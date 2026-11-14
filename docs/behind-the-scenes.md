@@ -29,7 +29,7 @@ During my trials, moving the E3200-specific compatibility response onto downstre
 
 Do not turn this into a broad DHCP server, move the extender responder to the wired side, or add unrelated interface changes as a convenience. The fact that a Mac is attached to both links does not mean it is configured as an IP router, NAT gateway or general bridge. It transports DHCP only.
 
-## Runtime and shutdown
+## Mac runtime and shutdown
 
 The guided program validates the operator's private settings and the connections required by the selected mode. It verifies and copies its bundled components into a private temporary directory, then invokes the existing shell supervisor. In full mode, the worker starts the forwarder first and waits for readiness before starting the extender responder. Either component failing stops both. In compatibility mode it starts only the extender responder. Both paths retain the same parent watcher and shutdown supervision.
 
@@ -43,7 +43,7 @@ Settings, leases, logs and private lock files live under `~/Library/Application 
 | --- | --- |
 | `src/desktop.py` | Guided setup, private profile, resource verification, internal worker dispatch and parent lifecycle |
 | `src/configuration.py` | Address/identity validation and read-only Mac discovery |
-| `src/forwarder.py` | Bounded DHCP transport and Darwin packet delivery |
+| `src/forwarder.py` | Bounded DHCP transport with Darwin and Linux delivery branches |
 | `src/combined_worker.py` | Start/stop/readiness coordination |
 | `src/launcher.template.command` | Privileged process supervision and network preflight |
 | `packaging/` | Native executable build and release description |
@@ -75,3 +75,15 @@ The build startup-tests both the source entry point and frozen executable with `
 My captures establish a failing path and a working transport workaround on my network. They do not locate the precise dropping branch inside E3200/CHR30A firmware. The project includes no firmware patch, signing bypass, privileged extender access, VPN fix, or vendor-support claim.
 
 Older saved profiles without a mode load as full mode. New Wi-Fi-only profiles can omit Ethernet hardware by storing null adapter fields. Interactive launches require an explicit 1 or 2 at the mode menu; blank and invalid answers are rejected. The full mode is marked recommended; switching a Wi-Fi-first profile to full mode requires adapter setup. Validation-only runs never prompt for setup or persist mode changes. The startup summary reports configured extender lease duration, separately from main-router client leases.
+
+## Linux / Raspberry Pi runtime
+
+The separate Linux launcher uses a systemd service, the distribution's unmodified dnsmasq, libpcap and Linux interface-bound raw-IP delivery. Its compatibility responder stays on Wi-Fi. Forwarding delivers only the matched router replies to the selected downstream Ethernet connection. The raw delivery/interface self-test must pass before forwarding is reported ready.
+
+The explicit Prepare Ethernet action creates a NetworkManager local-only profile for the chosen adapter, with no default route. The host keeps internet and remote access on Wi-Fi. Other clients continue receiving ordinary leases from the CHR30A. This is not NAT, general IP forwarding or a general address pool.
+
+The supervisor pins the saved home-router identity, pauses both components on Wi-Fi mismatch/loss, and retries. Ethernet reconnection can happen while compatibility stays running. Status is written on transitions rather than every polling tick. Component readiness does not establish a fresh accepted E3200 lease or working internet for every client.
+
+Settings: `/etc/keep-your-e3200`. State and bounded rotating logs: `/var/lib/keep-your-e3200`. Runtime files: `/run/keep-your-e3200`. The live journal viewer is independent of the service: Ctrl+C closes the viewer and returns Home.
+
+For source work, run `python3 packaging/build_linux.py` to create the .deb and optional installer bundle. No compiler or third-party Python build modules are required. This package targets 64-bit Debian-based systems with NetworkManager and systemd; the first hardware trial was a Pi 4. [Linux release process →](../linux/RELEASING.md) · [Linux validation →](../linux/VALIDATION.md)

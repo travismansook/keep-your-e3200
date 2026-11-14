@@ -1,6 +1,8 @@
-# Open the helper and get started
+# Mac setup: open the helper and get started
 
 [← Back](../README.md) · [FAQ](faq.md) · [Troubleshooting](troubleshooting.md)
+
+**Using Linux or a Raspberry Pi?** Follow the [Linux/Pi setup guide](../linux/README.md). This page describes the Mac download.
 
 ## 1. Choose the executable download
 

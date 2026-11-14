@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+case "${1-}" in
+remove|purge|disappear)
+    systemctl daemon-reload || true
+    rm -f /run/keep-your-e3200-upgrade-active
+    echo 'Generated settings, leases and logs were retained in /etc/keep-your-e3200 and /var/lib/keep-your-e3200.'
+    ;;
+esac

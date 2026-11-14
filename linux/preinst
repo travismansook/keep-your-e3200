@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+case "${1-}" in
+install|upgrade)
+    [ "$(getconf LONG_BIT)" = 64 ] || { echo 'This preview requires a 64-bit OS. Use Raspberry Pi OS Lite (64-bit).' >&2; exit 1; }
+    for folder in /opt/keep-your-e3200 /etc/keep-your-e3200 /var/lib/keep-your-e3200; do
+        [ ! -L "$folder" ] || { echo "Refusing symbolic link: $folder" >&2; exit 1; }
+    done
+    ;;
+esac

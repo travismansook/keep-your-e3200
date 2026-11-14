@@ -15,3 +15,7 @@ Native downloads include that same corresponding source archive and license. To 
 Native downloads embed Python through PyInstaller, so users do not need a Python installation. Python is distributed under the PSF license and associated notices. PyInstaller is distributed under GPL 2.0 or later with its bootloader exception. Their license texts are included in the native download and exported by `--extract-source` alongside these notices. PyInstaller is pinned to 6.22.3 for release builds.
 
 No Verizon firmware, real device serial numbers, network logs, credentials, or personally configured launcher is distributed here. Verizon and product names identify the equipment being discussed; this is an independent community project.
+
+## Linux / Raspberry Pi packages
+
+The Linux .deb contains the original MIT-licensed Python helper and its launcher/service files. It does not bundle the modified Darwin dnsmasq engine, PyInstaller, or a Python interpreter. The operating system's package manager supplies unmodified dnsmasq, libpcap, Python and networking/service tools as separate dependencies. Their distribution packages provide the corresponding licenses and source-access information. The macOS source-export commands above apply to the native Mac download.

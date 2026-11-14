@@ -1,0 +1,35 @@
+[Unit]
+Description=Keep Your E3200 — compatibility and Ethernet DHCP forwarding
+Wants=network-online.target
+After=network-online.target NetworkManager.service
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Group=e3200-helper
+ExecStart=/usr/bin/python3 -I /opt/keep-your-e3200/src/linux_service.py
+WorkingDirectory=/opt/keep-your-e3200
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONNOUSERSITE=1
+Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=10
+KillMode=control-group
+StateDirectory=keep-your-e3200
+StateDirectoryMode=0710
+RuntimeDirectory=keep-your-e3200
+RuntimeDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/keep-your-e3200 /run/keep-your-e3200
+RestrictAddressFamilies=AF_INET AF_INET6 AF_PACKET AF_NETLINK AF_UNIX
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=150
+
+[Install]
+WantedBy=multi-user.target

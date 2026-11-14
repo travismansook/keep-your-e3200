@@ -2,6 +2,10 @@
 
 [← Back to Keep Your E3200](../README.md)
 
+## Which download do I need?
+
+**Mac:** use the Apple Silicon or Intel ZIP and follow [Mac setup](setup.md). **Raspberry Pi or compatible 64-bit Debian-based Linux:** use the ready-made .deb and follow [Linux/Pi setup](../linux/README.md). Both belong to this same project. Windows combined support is still planned.
+
 ## Can I keep a VPN running on the helper Mac?
 
 **For now, disconnect it before starting and keep it disconnected until your configuration has been tested.** A VPN may block the helper's direct Wi-Fi internet test or communication with the home router. Reconnecting the VPN after startup may also interrupt operation. The program reminds you about this but never changes VPN settings.
@@ -48,11 +52,11 @@ The E3200 still needs coax to the CHR30A. Only the **Mac's** Ethernet cable is o
 
 ## Do I need a network switch?
 
-**No. For the recommended mode, plug your Mac's Ethernet cable directly into an Ethernet port on the E3200.** I used a gigabit network switch—a box that adds more Ethernet ports—in my own setup because I had several wired devices. It is optional; you do not need to buy one to follow this guide.
+**No. For the recommended mode, plug the helper computer's Ethernet cable directly into an Ethernet port on the E3200.** I used a gigabit network switch—a box that adds more Ethernet ports—in my own setup because I had several wired devices. It is optional; you do not need to buy one to follow this guide.
 
 ## Do I need to keep this running all the time?
 
-**Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with home Wi-Fi connected. The recommended mode also needs the Mac Ethernet cable connected.
+**Plan to leave it running whenever you want this setup to work reliably.** Keep the host awake with home Wi-Fi connected. The recommended mode also needs the helper computer's Ethernet cable connected.
 
 The helper is needed for address requests, not every internet packet. An existing lease may continue working after you close it, so the effect is not always immediate. New devices, renewals, restarts, or lost addresses can need the helper again.
 
@@ -60,19 +64,19 @@ The helper is needed for address requests, not every internet packet. An existin
 
 That is not a reliable substitute for an available helper. A lease has an expiry, and the E3200 normally tries to renew before then. Restarting or losing an address can cause an earlier request.
 
-Start with a **one-hour E3200 lease** while checking that it works and renews. In **Home → Settings → Change lease duration**, choose a new duration and confirm it with **yes**. One day or one year can be selected later, but neither removes the need to keep the host available. Changing this setting affects a new or renewed E3200 lease, not a lease it already accepted. The CHR30A controls ordinary devices' leases separately.
+A **one-hour E3200 lease** is useful for testing renewal. A day or a year can be reasonable for an extender with a protected, reserved address, but the helper should remain available. On Mac, use **Home → Settings → Change lease duration**. On Linux/Pi, stop the helper with **2**, choose **6 · Change lease duration**, confirm the change, then start it again with **1**. Changing this setting affects future E3200 offers, not the expiry of a lease already accepted. The CHR30A controls ordinary devices' leases separately.
 
 ## Could I leave it running on a Raspberry Pi?
 
-**That is a planned option for a future Linux version. The current executable is for Mac and will not run on a Raspberry Pi.**
+**Yes—the Linux/Pi preview provides that option.** I installed the first preview on a **Raspberry Pi 4 Model B with 1 GB RAM** and confirmed an actual Ethernet device received IPv4 and internet access. The updated preview and longer-term recovery checks still need testing. [Testing record →](../linux/VALIDATION.md)
 
-A Pi is attractive because it is small and can use little power. The full workaround needs both Wi-Fi and Ethernet, so a future Pi setup for both fixes would need both connections and a supported Linux implementation. Some Pi models need an extra Ethernet adapter. Do not buy hardware assuming this release already supports it. [Platform plans →](roadmap.md)
+Use **Raspberry Pi OS Lite 64-bit** with NetworkManager. The full helper needs the Pi connected to both home Wi-Fi and an E3200 Ethernet port; the E3200 still needs coax. My 8 GB microSD was enough to start, with limited room for future OS updates. The Mac .command file does not run on a Pi; install the separate .deb. [Pi setup →](../linux/README.md)
 
 ## What about an old laptop or spare computer?
 
 An already-owned spare Mac can avoid an extra hardware purchase. It needs a supported Mac version, home Wi-Fi and reliable power. The recommended mode also needs Ethernet. Keep the screen off if desired, but keep the computer awake. An adapter may be needed if it has no Ethernet port.
 
-Windows and Linux laptops are planned for later. The old project's Windows/Linux compatibility-only downloads do not include this combined Ethernet workaround.
+The Linux preview targets compatible **64-bit Debian-based computers with NetworkManager and systemd** as well as Raspberry Pi OS. Other Linux distributions and Windows are not included. My initial hardware trial was a Pi 4; other computers need their own testing.
 
 ## Will leaving a laptop on use more electricity?
 
@@ -116,6 +120,22 @@ Ctrl+C stops everything started by the selected mode. Closing its terminal windo
 
 The program keeps the Mac awake while its managed helper is running. It is not an installed startup service, and recovery after host reboot has not been field-verified. Reopen it after restarting the host.
 
+## Can I close the Pi menu or disconnect from it?
+
+**Yes. The Linux/Pi helper runs as a background service.** Choosing **0 · Quit** closes its menu; ending the SSH connection also leaves it running. In **13 · View live logs**, Ctrl+C closes the viewer and returns Home. Use **2 · Stop helper** when you want to stop the actual helper.
+
+Enable **7 · Start automatically after reboot** after testing your setup. Enabling it affects future reboots; it does not start a stopped helper immediately. Disabling automatic startup does not stop a helper that is already running. The Pi must remain powered.
+
+## How do I update the Linux/Pi version?
+
+Download the new **.deb installer** and install it with apt, following the [update steps](../linux/README.md#updates-and-github-releases). You do not compile the application or reflash the microSD. Saved settings, leases and boot preference are kept; a previously running helper is restarted.
+
+## Why does the Pi show different Wi-Fi and router addresses?
+
+They identify different devices. The router might use **192.168.1.1**, while the Pi has its own Wi-Fi address, such as **192.168.1.24**. Diagnose labels them separately.
+
+The Pi's dedicated helper Ethernet connection intentionally uses a local-only **169.254.x.x** address. The Pi stays online through Wi-Fi. Ordinary clients connected to the E3200 should still get their usual home-network addresses from the CHR30A; a self-assigned 169.254 address on those clients is a problem to investigate.
+
 ## Is it a permanent firmware fix? Is it supported by Verizon?
 
 No. It is an independent computer-hosted workaround. It does not flash the extender, replace router firmware, or establish full Verizon mesh/SON compatibility. Verizon's current compatibility guidance does not support the older extenders with the CHR30A. [Official guidance](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point)
@@ -124,7 +144,7 @@ No. It is an independent computer-hosted workaround. It does not flash the exten
 
 The project is open source and has no subscription. You supply the host computer and its electricity.
 
-There is no telemetry or account sign-in. Your settings and logs stay in your Mac's private Application Support folder. Startup performs a small IPv4 connectivity check against Google's standard connectivity-check endpoint; normal operation talks on your home network. Logs can contain local IP/MAC addresses, so remove those before posting them publicly.
+There is no telemetry or project account sign-in. On Mac, settings and logs stay in the private Application Support folder, and startup checks a standard Google IPv4 connectivity endpoint. On Linux/Pi, settings are under `/etc/keep-your-e3200` and status/rotating logs under `/var/lib/keep-your-e3200`; connection checks talk to the home router. The installer uses the operating system's package repositories for dependencies. Logs can contain local IP/MAC addresses, so remove those before posting them publicly.
 
 ## Can I use more than one E3200, or run two helpers together?
 
@@ -132,4 +152,4 @@ This preview configures one E3200. Run one applicable compatibility responder fo
 
 ## Do I have to build it, install Python, or understand networking?
 
-**Use the executable download in Releases.** Python and the DHCP engine are included. Choose a mode, connect the Mac as shown, identify the E3200, check its address on your router, and follow the setup questions. The source code and developer build instructions are optional. [Start here →](setup.md)
+**Use a named download in Releases.** The Mac ZIP includes Python and its DHCP engine. The Linux/Pi .deb installs the required software through the package manager. Neither requires building or compiling. The source and developer instructions are optional. [Mac setup →](setup.md) · [Linux/Pi setup →](../linux/README.md)

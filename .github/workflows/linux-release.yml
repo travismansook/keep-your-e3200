@@ -1,0 +1,77 @@
+name: Build Linux and Raspberry Pi preview
+on:
+  push:
+    branches: [main]
+    paths: ['src/linux_*.py', 'src/forwarder.py', 'src/configuration.py', 'linux/**', 'tests/test_linux*.py', 'packaging/build_linux.py', '.github/workflows/linux-release.yml']
+  pull_request:
+    paths: ['src/linux_*.py', 'src/forwarder.py', 'src/configuration.py', 'linux/**', 'tests/test_linux*.py', 'packaging/build_linux.py', '.github/workflows/linux-release.yml']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the tested Linux/Pi prerelease
+        type: boolean
+        default: false
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: linux-preview-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Run automated checks
+        run: |
+          python -m unittest discover -s tests -v
+          for script in linux/install.sh linux/keep-your-e3200 linux/preinst linux/postinst linux/prerm linux/postrm; do
+            sh -n "$script"
+          done
+      - name: Build and inspect the ready-made package
+        run: |
+          python packaging/build_linux.py
+          dpkg-deb --info release/linux/*.deb
+          dpkg-deb --contents release/linux/*.deb
+          (cd release/linux && sha256sum --check SHA256SUMS.txt)
+      - name: Test delivery inside isolated Linux virtual networks
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dnsmasq-base libpcap0.8t64 iproute2
+          sudo /usr/bin/python3 linux/test_network_namespace.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: linux-preview-downloads
+          path: |
+            release/linux/*.deb
+            release/linux/*.tar.gz
+            release/linux/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: linux-preview-downloads
+          path: release/linux
+      - name: Publish the Linux preview without replacing the Mac latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python3 src/linux_app.py version)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+~preview[0-9]+$ ]] || { echo 'Expected a new Linux preview version.' >&2; exit 1; }
+          tag="linux-v${version/\~/-}"
+          (cd release/linux && sha256sum --check SHA256SUMS.txt)
+          gh release create "$tag" release/linux/*.deb release/linux/*.tar.gz release/linux/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Keep Your E3200 — Linux / Raspberry Pi ${version/\~/-}" --notes-file linux/RELEASE_NOTES.md --prerelease --latest=false

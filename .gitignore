@@ -9,3 +9,5 @@ release/
 *.leases
 profile.json
 local-config*.json
+*.deb
+Keep-Your-E3200-Linux-Preview*.tar.gz

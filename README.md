@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/travismansook/keep-your-e3200/releases/latest"><strong>Download for Mac</strong></a>
-  &nbsp; · &nbsp; <a href="docs/setup.md">Getting started</a>
+  &nbsp; · &nbsp; <a href="https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview3"><strong>Download for Linux / Raspberry Pi</strong></a>
   &nbsp; · &nbsp; <a href="docs/faq.md">FAQ</a>
   &nbsp; · &nbsp; <a href="docs/behind-the-scenes.md">Behind the scenes</a>
 </p>
@@ -17,83 +17,88 @@
 
 That is a big part of why I wanted to keep mine. If Verizon replaces your old extender with **another CHR30A acting as an access point at no extra charge** and lets you keep the E3200, you can use the replacement **and** put the retained E3200 back to work as an additional extender. Confirm replacement costs and whether you can keep the old equipment with Verizon for your account.
 
-## Why I needed a helper
+## Why I made this
 
-I started this project after upgrading my main router from a **CR1000A to a CHR30A**. I wanted to keep using my **E3200 extender connected over coax**, but the equipment no longer worked together as expected.
+After upgrading my main router from a **CR1000A to a CHR30A**, I wanted to keep my **E3200 connected over coax**. Instead, it repeatedly turned yellow, lost internet access, and disconnected the devices using it. My earlier logs showed the recovery cycle roughly every **three minutes**, with most interruptions lasting **9–11 seconds**. I also couldn’t open the E3200’s network settings at its IP address.
 
-My E3200 cycled through a yellow-light problem. **When it turned yellow, it lost its internet connection, causing devices connected through it to disconnect.** My earlier logs showed the recovery cycle repeating roughly every **three minutes**, with most interruptions lasting **9–11 seconds**. I couldn’t access the E3200’s network settings page at its IP address. Later, devices connected by Ethernet through the extender could get IPv6 but missed the IPv4 address they needed—so some sites worked and others failed.
+Later, Ethernet devices could get IPv6 but missed the IPv4 address they needed. Some sites worked; others would not load.
 
 **One helper addresses both problems:**
 
-- **Keep the E3200 connected and access its settings again.** The compatibility fix addresses the yellow-light disconnect cycle I experienced. Once the extender accepts its IPv4 address, you can open its network settings page at the address you chose during setup.
-- **Get Ethernet devices online automatically.** The Ethernet fix helps devices plugged into the E3200 receive an IPv4 address from the main router, so you do not have to enter an address manually on each device.
-
-## Two problems. One helper.
-
 | What you notice | What the helper does |
 | --- | --- |
-| **The E3200 turns yellow and loses internet access, causing disconnects, or its settings page will not open** because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects, restoring access to its network settings page at its accepted IPv4 address. |
-| **Ethernet devices say connected, but cannot reach some sites**, and do not get a usable IPv4 address automatically. | Gets their address requests through to the CHR30A and sends the router's replies back to the wired side. |
+| **The E3200 turns yellow and disconnects, or you cannot open its settings page**, because it rejects the router's address offer. | Gives the E3200 an address offer with the compatibility information it expects. Once it accepts the address, its network settings page becomes reachable at that address again. |
+| **Ethernet devices say connected but cannot reach some sites**, and do not receive a usable IPv4 address automatically. | Gets their address requests through to the CHR30A and returns the router's replies to the wired side. Devices keep using automatic addressing. |
 
-Your CHR30A stays the main router. Your devices' normal internet traffic keeps using the network directly. The helper handles address messages; it does not put all your traffic through the Mac.
+Your CHR30A stays the main router. The helper handles address messages; your normal downloads, video and games do not pass through the helper computer.
 
-> **A workaround, with clear limits.** This targets the two address-assignment problems described above. It is not a firmware upgrade or a fix for every yellow light. The combined workaround worked with my Mac and Stream TV; the reusable release needs testing in more homes. [What has been tested →](docs/validation.md)
+> **A community workaround.** This targets the address-assignment problems I experienced. It is not a firmware upgrade or a repair for every yellow light or Wi-Fi disconnect. I tested the original workaround with wired devices on my own network. The Linux preview has initial Raspberry Pi testing; broader testing is still needed. [What has been tested →](docs/validation.md)
 
-## Download. Open. Follow the questions.
+## Choose your download
 
-### 1 · Download the right Mac file
+**No building or compiling is needed.** Mac and Linux/Pi live in this same project, with separate downloads and instructions.
 
-**[Get the executable from Releases →](https://github.com/travismansook/keep-your-e3200/releases/latest)**
-
-Choose **Apple Silicon** for an M-series Mac or **Intel** for an Intel Mac. Requires **macOS 15 or later**. The ZIP contains one file: **Keep Your E3200.command**. No building, Python installation, or code editing is needed.
-
-### 2 · Choose how to connect the Mac
-
-The launcher offers two modes:
-
-| Mode | Mac connections | What it does |
+| Your computer | Download | Start here |
 | --- | --- | --- |
-| **1. Wi-Fi + Ethernet — Recommended** | Home Wi-Fi plus an Ethernet cable directly into the E3200 | Runs the compatibility fix and helps wired devices obtain IPv4 automatically. |
-| **2. Wi-Fi only** | Home Wi-Fi; no Mac Ethernet cable needed | Runs only the E3200 compatibility fix. It does **not** fix wired devices missing IPv4. |
+| **Mac — Apple Silicon or Intel, macOS 15+** | A ZIP containing **Keep Your E3200.command** | [Mac setup guide](docs/setup.md) |
+| **Raspberry Pi / compatible 64-bit Debian-based Linux — preview** | A ready-made **.deb installer**; an optional installer bundle is also available | [Linux & Raspberry Pi setup guide](linux/README.md) |
+| **Windows** | Planned; this combined helper has no Windows download yet | [Platform roadmap](docs/roadmap.md) |
 
-Keep the extender's coax connection to the router in either mode. **The main CHR30A needs its MoCA Expansion Module installed.** Wi-Fi-only refers to the Mac, not a wireless connection between the E3200 and CHR30A. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
+I tested the first Linux preview on a **Raspberry Pi 4 Model B with 1 GB RAM**. An actual Ethernet device received IPv4 and internet access. The updated preview still needs its own live update/recovery checks. [Linux testing notes →](linux/VALIDATION.md)
 
-### 3 · Open the helper
+### On a Mac
 
-Unzip the download and double-click **Keep Your E3200.command**. Setup asks for your main router address, the **LAN1 MAC** printed on the E3200's rear sticker under **Serial#**, and an address reserved on the router for the extender's settings page. **[Where to find these details and how to reserve the address →](docs/setup.md#3-find-the-details-the-helper-asks-for)** It requests administrator access when needed.
+1. [Download the Mac ZIP](https://github.com/travismansook/keep-your-e3200/releases/latest) for Apple Silicon or Intel.
+2. Extract it and open **Keep Your E3200.command**. Python and the DHCP engine are included.
+3. Follow the setup questions. Keep the window open and the Mac awake while using the helper. **Ctrl+C stops the helper and returns Home.**
 
-At each question, **type your answer and press Return**. A value in **[brackets]** is the default; press Return to accept it. The helper waits for your answer before continuing.
+Setup asks for the **LAN1 MAC** printed on the back of your E3200 under **Serial#**, and an address reserved on the router for the extender. Dots, colons, hyphens, uppercase and lowercase all work for that MAC address. [Where to find the details →](docs/setup.md#3-find-the-details-the-helper-asks-for)
 
-After first-time setup, Home offers **Start helper**, **Settings**, **Quit**, and **Help and troubleshooting**. Settings lets you review saved values or change the E3200 lease with confirmation.
+### On Linux or a Raspberry Pi
 
-Choose a mode by typing **1** for **Wi-Fi + Ethernet — Recommended** or **2** for **Wi-Fi only**, then press Return. The opening menu requires an explicit choice. Your setup summary shows the E3200 address, router/DNS, connections and offered lease length. Wait for **READY**, which names the mode running. Leave the window open and the Mac awake. **Ctrl+C** stops everything started by that mode and returns Home. The helper is stopped while you are at Home.
+1. [Download the Linux/Pi .deb](https://github.com/travismansook/keep-your-e3200/releases/tag/linux-v0.1.0-preview3).
+2. Install it using the [step-by-step Linux guide](linux/README.md). The installer handles the required software; you do not compile anything.
+3. Run **`keep-your-e3200`** to open Home. It includes setup, settings, start/stop, status and **live logs**.
 
-**[First-time setup, including Mac's download warning →](docs/setup.md)**
+The Pi helper runs in the background. **Closing its menu or disconnecting from the Pi leaves the helper running.** Startup after reboot is available once you have tested your setup.
+
+## How do I connect it?
+
+| Mode | Helper computer connections | What runs |
+| --- | --- | --- |
+| **Wi-Fi + Ethernet — Recommended** | Home Wi-Fi plus an Ethernet cable directly into the E3200 | Compatibility help **and** automatic IPv4 help for wired devices |
+| **Wi-Fi only** | Home Wi-Fi | E3200 compatibility help; the Ethernet IPv4 fix is off |
+
+**Keep the E3200's coax connection to the CHR30A in both modes.** The main CHR30A needs its **MoCA Expansion Module** for that connection. Wi-Fi-only describes the helper computer; the E3200 does not connect wirelessly back to the CHR30A in this setup. [Connection requirements →](docs/faq.md#what-do-i-need-to-connect-the-e3200-over-coax)
+
+You do not need a network switch. I used a gigabit switch for extra ports in my own setup. [FAQ →](docs/faq.md#do-i-need-a-network-switch)
 
 ## Do I need to leave it running?
 
-**Yes—plan to keep the helper running and its host awake, with the connections required by your selected mode available.** Devices can need it when they first connect, renew their addresses, restart, or lose a lease. They may keep working for a while after it closes, but that is not a permanent fix.
+**Yes—keep the helper computer powered, awake and connected.** Devices can need the helper when they connect, renew their addresses, restart or lose a lease. An existing address may keep working for a while after the helper stops, but that does not make a one-time run a permanent fix.
 
-An existing spare Mac can be a practical host. A small Linux computer or **Raspberry Pi** could be a future always-on option, but **this Mac download will not run on a Pi**. Windows, Linux, and Raspberry Pi support are planned for later; they are not included in this release.
+An existing spare Mac can be a practical host. The Linux/Pi preview provides an always-on option without leaving your everyday Mac running. I use a Pi 4; compatible Debian-based computers can also be considered within the preview's [requirements and testing limits](linux/README.md#what-you-need).
 
-**[Read the FAQ: leases, power, speed, and always-on options →](docs/faq.md)**
+**[FAQ: leases, power, spare computers and everyday controls →](docs/faq.md)**
 
-## Which project should I use?
+## Project history
 
-This is the **combined compatibility + Ethernet helper for Mac**. My earlier [E3200 DHCP Helper](https://github.com/travismansook/e3200-dhcp-helper) focuses on the extender's own address/compatibility problem and has separate Windows, Mac, and Linux workflows. Those platform downloads do not contain this new Ethernet forwarder.
+**Keep Your E3200 is the current project.** It brings the E3200 compatibility workaround and the Ethernet IPv4 workaround together, with Mac and Linux/Pi downloads.
 
-Run only one applicable helper at a time. If you already use the earlier program, stop it before starting this one.
+My earlier [E3200 DHCP Helper](https://github.com/travismansook/e3200-dhcp-helper) documents the original investigation and compatibility-only work that led to this helper. I keep that link here as background on how the project started.
+
+**Run one applicable helper at a time.** Stop the Mac helper before starting the Pi helper for the same E3200, or stop the earlier compatibility-only program before switching to this one.
 
 ## Want the story—or the details?
 
 - **[FAQ](docs/faq.md)** — answers without the networking jargon.
-- **[Setup guide](docs/setup.md)** — what to connect, what to enter, and how to stop.
+- **[Mac setup](docs/setup.md)** · **[Linux / Raspberry Pi setup](linux/README.md)** — what to install, connect and enter.
 - **[Troubleshooting](docs/troubleshooting.md)** — what to check when something does not work.
-- **[Behind the scenes](docs/behind-the-scenes.md)** — the DHCP behavior, design, source, and developer instructions.
-- **[Validation record](docs/validation.md)** — observed results and what still needs field testing.
-- **[Project story](docs/project-story.md)** — why I made this and how the investigation became this tool.
-- **[Roadmap](docs/roadmap.md)** — Windows, Linux, and Raspberry Pi plans.
+- **[Behind the scenes](docs/behind-the-scenes.md)** — the design and optional developer instructions.
+- **[Testing record](docs/validation.md)** · **[Linux testing record](linux/VALIDATION.md)** — evidence and remaining checks.
+- **[Project story](docs/project-story.md)** — how the investigation became this tool.
+- **[Platform roadmap](docs/roadmap.md)** — current support and next steps.
 
-This project is independent of Verizon. Verizon currently [does not support pairing the CHR30A with previous-generation extenders](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point). The helper does not turn it into a fully supported Verizon mesh system.
+This project is independent of Verizon. Verizon [does not support pairing the CHR30A with previous-generation extenders](https://www.verizon.com/support/residential/internet/equipment/routers/wi-fi-access-point). This workaround does not establish a fully supported Verizon mesh system.
 
-Original code: [MIT license](LICENSE). Bundled components retain their [own licenses](THIRD-PARTY-NOTICES.md).
+Original code: [MIT license](LICENSE). Third-party software retains its [own licenses](THIRD-PARTY-NOTICES.md).

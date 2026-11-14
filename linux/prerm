@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+case "${1-}" in
+upgrade)
+    rm -f /run/keep-your-e3200-upgrade-active
+    if systemctl is-active --quiet keep-your-e3200.service; then
+        (umask 077; : > /run/keep-your-e3200-upgrade-active)
+    fi
+    systemctl stop keep-your-e3200.service
+    ;;
+remove)
+    systemctl stop keep-your-e3200.service || true
+    systemctl disable keep-your-e3200.service || true
+    ;;
+esac

@@ -645,7 +645,7 @@ def main(args=None):
         print('Included licenses and corresponding source exported to ' + str(target))
         return 0
     if sys.platform != 'darwin':
-        raise ValueError('This combined release runs on macOS. Windows and Linux versions are planned.')
+        raise ValueError('This is the Mac launcher. Use the separate Linux/Pi installer on Linux; Windows support is planned.')
     if selected.self_test:
         profile = dict(config.example(), mode=selected.mode or 'full')
         if profile['mode'] == 'compatibility':

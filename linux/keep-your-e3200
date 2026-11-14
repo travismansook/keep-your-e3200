@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+if [ "$(id -u)" -ne 0 ]; then
+    exec sudo /usr/bin/python3 -I /opt/keep-your-e3200/src/linux_app.py "$@"
+fi
+exec /usr/bin/python3 -I /opt/keep-your-e3200/src/linux_app.py "$@"

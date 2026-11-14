@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+case "${1-}" in
+configure)
+    if ! id e3200-helper >/dev/null 2>&1; then
+        adduser --system --group --no-create-home --home /var/lib/keep-your-e3200 e3200-helper
+    fi
+    [ "$(id -u e3200-helper)" -gt 0 ] || { echo 'Helper account must not be root.' >&2; exit 1; }
+    for folder in /etc/keep-your-e3200 /var/lib/keep-your-e3200; do
+        [ ! -L "$folder" ] || { echo "Refusing symbolic link: $folder" >&2; exit 1; }
+    done
+    install -d -m 700 /etc/keep-your-e3200
+    install -d -m 710 -g e3200-helper /var/lib/keep-your-e3200
+    systemctl daemon-reload
+    if [ -f /run/keep-your-e3200-upgrade-active ]; then
+        rm -f /run/keep-your-e3200-upgrade-active
+        systemctl start keep-your-e3200.service
+        echo 'Updated. Service restart requested; check keep-your-e3200 status for actual readiness.'
+    else
+        echo 'Installed. No service was started or enabled automatically.'
+        echo 'Next: keep-your-e3200 setup'
+    fi
+    ;;
+esac

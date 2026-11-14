@@ -3,7 +3,17 @@ description: Report a problem with the combined helper
 body:
   - type: markdown
     attributes:
-      value: Please read the setup guide and FAQ first. Remove private addresses, device IDs, passwords and serial numbers from anything you share.
+      value: Please read the Mac or Linux/Pi setup guide and FAQ first. Remove private addresses, device IDs, passwords and serial numbers from anything you share.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Which download are you using?
+      options:
+        - Mac — Apple Silicon
+        - Mac — Intel
+        - Linux / Raspberry Pi preview
+    validations:
+      required: true
   - type: input
     id: equipment
     attributes:
@@ -14,14 +24,14 @@ body:
   - type: input
     id: release
     attributes:
-      label: Helper version, Mac chip and macOS version
+      label: Helper version, computer or Pi model, and operating-system version
     validations:
       required: true
   - type: textarea
     id: symptom
     attributes:
       label: What happened?
-      description: Did the helper reach READY? Are both Mac connections active? Which device could not get IPv4?
+      description: What does Status or READY say? Are the helper computer's Wi-Fi and Ethernet connected? Which device could not get IPv4?
     validations:
       required: true
   - type: textarea

@@ -2,7 +2,7 @@ name: Build ready-to-open Mac downloads
 on:
   push:
     branches: [main]
-    paths: ['VERSION', '.github/workflows/release.yml', 'packaging/**']
+    paths: ['VERSION', 'packaging/build_release.py', 'packaging/RELEASE_NOTES.md']
   workflow_dispatch:
 permissions:
   contents: read
