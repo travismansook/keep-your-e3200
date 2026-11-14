@@ -30,7 +30,9 @@ The prepared GitHub source starts from the published Mac v0.3.0 baseline, adds t
 
 This exact candidate's automated suite passed **105 tests: 62 existing Mac/shared checks and 43 Linux-specific checks**. The earlier 122-test development run above also included 17 unpublished Mac tests. The smaller release count reflects that separation, not removal of Linux coverage. Workflow/issue-form YAML syntax, Linux shell scripts, links, package metadata and checksums are checked separately during preparation.
 
-Preview3 updates the package/guide/release preparation under a fresh version instead of replacing preview2 files with different contents. It still needs its own Pi update/menu trial, and GitHub CI has not run merely because its workflow is prepared. The Linux workflow requires explicit manual publication and marks its release as a prerelease without replacing Mac Latest.
+Preview3 updates the package/guide/release preparation under a fresh version instead of replacing preview2 files with different contents. It still needs its own Pi update/menu trial. The Linux workflow requires explicit manual publication and marks its release as a prerelease without replacing Mac Latest.
+
+On November 14, the [Linux build and packet checks](https://github.com/travismansook/keep-your-e3200/actions/runs/43567482692) passed for commit `86ea61244fd183ddd4b0847a19f0bb8d12f27dab`. GitHub ran all **105 tests** on Ubuntu 24.04, built and inspected the .deb, verified release checksums, and passed the isolated DHCP OFFER, ACK, renewal and local UDP delivery/interface tests. The separate [offline checks](https://github.com/travismansook/keep-your-e3200/actions/runs/43567482716) also passed. This is Linux kernel/packaging evidence; it does not replace a real Pi reboot, Wi-Fi recovery or fresh E3200 compatibility-lease test.
 
 ## Earlier development checks — preview1, November 13
 
@@ -50,4 +52,4 @@ Keep the Mac helper stopped during the live Pi compatibility trial. Existing lon
 
 ## Release scope
 
-Preview only. No router settings were changed during GitHub preparation, and the Mac executable download was not replaced. Initial Pi installation and live-client evidence apply to preview1. Preview2 development checks and the preview3 source-candidate checks are separate from the remaining live update/recovery tests. GitHub CI and release results must be recorded after those actions actually run.
+Preview only. No router settings were changed during GitHub preparation, and the Mac executable download was not replaced. Initial Pi installation and live-client evidence apply to preview1. Preview2 development checks and the preview3 source-candidate checks are separate from the remaining live update/recovery tests. GitHub CI results above were recorded after the checks completed. Public installer release status is separate from those passing build checks.

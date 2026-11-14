@@ -34,6 +34,8 @@ The Pi needs home Wi-Fi and an Ethernet connection to the E3200 for the full mod
 
 I installed the first local preview on a **Pi 4 Model B with 1 GB RAM**. Its isolated Linux DHCP OFFER/ACK/renewal test passed, and an actual Ethernet device using automatic addressing with Wi-Fi off received IPv4 and internet access.
 
+The [GitHub Linux build checks](https://github.com/travismansook/keep-your-e3200/actions/runs/43567482692) passed all **105 automated tests**, package inspection/checksums and isolated Linux DHCP OFFER/ACK/renewal delivery.
+
 This updated candidate still needs its own Pi trial. A fresh E3200 compatibility lease, live renewals, cable/Wi-Fi recovery, reboot startup, actual package upgrades and longer operation remain to be verified. Other Linux hardware is not field-validated. [Detailed testing record](https://github.com/travismansook/keep-your-e3200/blob/main/linux/VALIDATION.md).
 
 This is a **prerelease**, not a claim of a permanent firmware repair or universal device compatibility. It does not replace the Mac latest download.
